@@ -1,0 +1,15 @@
+body, html {
+	margin: 0 auto;
+}
+
+#app {
+	height: 100vh;
+	width: 100vw;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+canvas {
+	background-color: red;
+}
