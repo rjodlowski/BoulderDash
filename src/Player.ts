@@ -35,6 +35,7 @@ export default class Player {
 			this._gv.fieldSize,
 		)
 		this._gv.ctx.fillStyle = "black";
+
 	}
 
 	move(direction: string) {
