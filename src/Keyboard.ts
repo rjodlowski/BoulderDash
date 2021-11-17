@@ -6,7 +6,6 @@ export default class Keyboard {
 	_player: Player;
 
 	constructor(gv: GlobalVars, player: Player) {
-		console.log("keyboard created");
 		this._gv = gv;
 		this._player = player;
 

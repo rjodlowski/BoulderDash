@@ -12,11 +12,9 @@ export default class Main {
 	_canvasTest: CanvasTest // to delete
 
 	constructor() {
-		console.log("Main created");
-
 		this._gv = new GlobalVars();
 		this._board = new Board(this._gv);
-		this._player = new Player(this._gv, 80, 80);
+		this._player = new Player(this._gv, "red", 80, 80);
 		this._keyboard = new Keyboard(this._gv, this._player);
 		// this._canvasTest = new CanvasTest();
 
@@ -24,10 +22,11 @@ export default class Main {
 	}
 
 	animate() {
-		// console.log("new frame");
 		this._gv.ctx.clearRect(0, 0, this._gv.canvas.width, this._gv.canvas.height)
 
+		this._board.update();
 		this._player.update();
+
 		requestAnimationFrame(this.animate.bind(this));
 	}
 }

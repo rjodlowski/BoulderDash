@@ -6,18 +6,19 @@ export default class Player {
 	// Player model
 	width: number;
 	height: number;
+	color: string;
 
 	// Positions
 	posX: number;
 	posY: number;
 
-	constructor(gv: GlobalVars, startX: number, startY: number) {
-		console.log("Player created");
+	constructor(gv: GlobalVars, color: string, startX: number, startY: number) {
 		this._gv = gv;
 
 		// Player model dimensions
 		this.width = this._gv.fieldSize;
 		this.height = this._gv.fieldSize;
+		this.color = color;
 
 		this.posX = startX;
 		this.posY = startY;
@@ -28,13 +29,13 @@ export default class Player {
 	draw(posX: number, posY: number) {
 		// console.log("drawing player")
 
+		this._gv.ctx.fillStyle = this.color;
 		this._gv.ctx.fillRect(
 			posX,
 			posY,
 			this._gv.fieldSize,
 			this._gv.fieldSize,
 		)
-		this._gv.ctx.fillStyle = "black";
 
 	}
 
@@ -69,7 +70,6 @@ export default class Player {
 				} else {
 					console.log("Shift border right");
 				}
-
 				break;
 			default:
 				console.log("Unknown direction");
