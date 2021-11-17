@@ -43,16 +43,33 @@ export default class Player {
 
 		switch (direction) {
 			case 'up':
-				this.posY -= this._gv.fieldSize;
+				if (this.posY > this._gv.fieldSize * this._gv.innerBorder) {
+					this.posY -= this._gv.fieldSize;
+				} else {
+					console.log("Shift border top");
+				}
 				break;
 			case 'down':
-				this.posY += this._gv.fieldSize;
+				if (this.posY < this._gv.canvasHeight - ((this._gv.innerBorder + 1) * this._gv.fieldSize)) {
+					this.posY += this._gv.fieldSize;
+				} else {
+					console.log("Shift border bottom");
+				}
 				break;
 			case 'left':
-				this.posX -= this._gv.fieldSize;
+				if (this.posX > this._gv.fieldSize * this._gv.innerBorder) {
+					this.posX -= this._gv.fieldSize;
+				} else {
+					console.log("Shift border left");
+				}
 				break;
 			case 'right':
-				this.posX += this._gv.fieldSize;
+				if (this.posX < this._gv.canvasWidth - ((this._gv.innerBorder + 1) * this._gv.fieldSize)) {
+					this.posX += this._gv.fieldSize;
+				} else {
+					console.log("Shift border right");
+				}
+
 				break;
 			default:
 				console.log("Unknown direction");
