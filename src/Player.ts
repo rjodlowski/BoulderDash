@@ -1,3 +1,4 @@
+import Board from "./Board";
 import GlobalVars from "./GlobalVars";
 
 export default class Player {
@@ -42,12 +43,15 @@ export default class Player {
 	move(direction: string) {
 		// If player does not collide with unpassable entity (e.g. wall)
 
+		Board.playerMoved = true;
+
 		switch (direction) {
 			case 'up':
 				if (this.posY > this._gv.fieldSize * this._gv.innerBorder) {
 					this.posY -= this._gv.fieldSize;
 				} else {
 					console.log("Shift border top");
+					Board.movePartOfScene(this._gv, "top")
 				}
 				break;
 			case 'down':
@@ -55,6 +59,7 @@ export default class Player {
 					this.posY += this._gv.fieldSize;
 				} else {
 					console.log("Shift border bottom");
+					Board.movePartOfScene(this._gv, "bottom")
 				}
 				break;
 			case 'left':
@@ -62,6 +67,7 @@ export default class Player {
 					this.posX -= this._gv.fieldSize;
 				} else {
 					console.log("Shift border left");
+					Board.movePartOfScene(this._gv, "left")
 				}
 				break;
 			case 'right':
@@ -69,11 +75,14 @@ export default class Player {
 					this.posX += this._gv.fieldSize;
 				} else {
 					console.log("Shift border right");
+					Board.movePartOfScene(this._gv, "right")
 				}
 				break;
 			default:
 				console.log("Unknown direction");
 		}
+		console.log(this._gv.displayX, this._gv.displayY);
+
 	}
 
 	update() {

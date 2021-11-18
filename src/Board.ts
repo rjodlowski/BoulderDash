@@ -15,7 +15,17 @@ export default class Board {
 		dirt: Dirt[],
 	}
 
+	// part of scene displays border walls
+	displaysWalls: {
+		top: boolean,
+		bottom: boolean,
+		left: boolean,
+		right: boolean,
+	}
+
 	level: number[][];
+
+	public static playerMoved: boolean = false;
 
 	constructor(gv: GlobalVars) {
 		this._gv = gv;
@@ -24,14 +34,24 @@ export default class Board {
 			innerWalls: [],
 			dirt: [],
 		}
-		this.level = levels[this._gv.currLevel];
+		// this.level = levels[this._gv.currLevel];
+		// console.log(this.level);
+
+		this.displaysWalls = {
+			top: false,
+			bottom: false,
+			left: false,
+			right: false,
+		}
+
 
 		// console.log(this.level1);
 
+		this.setLevel(0);
 		this.createCanvas();
+		this.checkWalls();
 		this.getPartOfScene();
 		this.displayScene();
-		// this.createOuterWalls();
 	}
 
 	createCanvas() {
@@ -43,7 +63,20 @@ export default class Board {
 		this._gv.ctx = this._gv.canvas.getContext("2d");
 	}
 
-	// Gets the part of the scene to display
+	/**
+	 * Sets the level id and associated params in GlobalVars
+	 * @param levelId 
+	 */
+	setLevel(levelId: number) {
+		this._gv.currLevel = levelId;
+		this.level = levels[this._gv.currLevel];
+		this._gv.levelHeight = this.level.length;
+		this._gv.levelWidth = this.level[0].length;
+	}
+
+	/**
+	 * Gets the part of the scene to display
+	 */
 	getPartOfScene() {
 		let partOfScene: number[][] = new Array(this._gv.fieldsPerHeight).fill(0).map(() => new Array(this._gv.fieldsPerWidth).fill("JD"));
 
@@ -61,13 +94,65 @@ export default class Board {
 		// console.log(this.scenePart);
 	}
 
-	// Move the part of the scene in the given direction
-	movePartOfScene(direction: string) {
-
+	/**
+	 * Checks if the sides of a level are displayed
+	 */
+	checkWalls() {
+		this._gv.displayY == 0 ? this.displaysWalls.top = true : this.displaysWalls.top = false;
+		this._gv.displayY + this._gv.fieldsPerHeight >= this.level.length - 1 ? this.displaysWalls.bottom = true : this.displaysWalls.bottom = false;
+		this._gv.displayX == 0 ? this.displaysWalls.left = true : this.displaysWalls.left = false;
+		this._gv.displayX + this._gv.fieldsPerWidth >= this.level[0].length - 1 ? this.displaysWalls.right = true : this.displaysWalls.right = false;
+		console.log(this.displaysWalls);
+		this.displayScene();
 	}
 
+	/** 
+	 * Move the part of the scene in the given direction
+	 */
+	public static movePartOfScene(gv: GlobalVars, direction: string) {
+		console.log(direction);
+		switch (direction) {
+			case "top":
+				if (gv.displayY > 0) {
+					gv.displayY--;
+				} else {
+					console.log("Can't move up", gv.displayY);
+				}
+				break;
+
+			case "bottom":
+				if (gv.displayY + gv.fieldsPerHeight <= gv.levelHeight - 1) {
+					gv.displayY++;
+				} else {
+					console.log("Can't move down", gv.displayY);
+				}
+				break;
+
+			case "left":
+				if (gv.displayX > 0) {
+					gv.displayX--;
+				} else {
+					console.log("Can't move left", gv.displayX);
+				}
+				break;
+
+			case "right":
+				if (gv.displayX + gv.fieldsPerWidth <= gv.levelWidth - 1) {
+					gv.displayX++;
+				} else {
+					console.log("Can't move right", gv.displayX);
+				}
+				break;
+
+			default:
+				console.log("Unknown direction");
+				break;
+		}
+	}
+
+
 	/**
-	 * Displays a part of the scene
+	 * Displays a part of the scene; Renders items represented by numbers in a level
 	 */
 	displayScene() {
 		// Save a part of the scene to the variable
@@ -142,6 +227,13 @@ export default class Board {
 
 	update() {
 		// update all static elements on the board
+		this.getPartOfScene();
+
+		if (Board.playerMoved) {
+			console.log("Player moved");
+			this.displayScene();
+			Board.playerMoved = false;
+		}
 
 		// Border walls
 		for (let i: number = 0; i < this.allElements.borderWalls.length; i++) {
