@@ -27,6 +27,11 @@ export default class Player {
 		this.draw(this.posX, this.posY);
 	}
 
+	/**
+	 * Draw the player
+	 * @param posX [px]
+	 * @param posY [px]
+	 */
 	draw(posX: number, posY: number) {
 		// console.log("drawing player")
 
@@ -94,7 +99,11 @@ export default class Player {
 
 		switch (direction) {
 			case 'up':
-				if (this.posY > this._gv.fieldSize * this._gv.innerBorder) {
+				let upperBorderPx = this._gv.fieldSize * this._gv.innerBorder
+				let minDisplayY = 0
+				let distanceFromTop = this.posY
+
+				if (this.posY > upperBorderPx || this._gv.displayY == minDisplayY && distanceFromTop <= upperBorderPx) {
 					if (this.canMove(direction)) {
 						this.posY -= this._gv.fieldSize;
 					}
@@ -104,7 +113,11 @@ export default class Player {
 				}
 				break;
 			case 'down':
-				if (this.posY < this._gv.canvasHeight - ((this._gv.innerBorder + 1) * this._gv.fieldSize)) {
+				let lowerBorderPx = this._gv.canvasHeight - ((this._gv.innerBorder + 1) * this._gv.fieldSize)
+				let distanceFromBottom = this._gv.canvasHeight - (this._gv.canvasHeight - this.posY)
+				let maxDisplayY = this._gv.levelHeight - this._gv.fieldsPerHeight
+
+				if (this.posY < lowerBorderPx || this._gv.displayY == maxDisplayY && distanceFromBottom >= lowerBorderPx) {
 					if (this.canMove(direction)) {
 						this.posY += this._gv.fieldSize;
 					}
@@ -114,7 +127,11 @@ export default class Player {
 				}
 				break;
 			case 'left':
-				if (this.posX > this._gv.fieldSize * this._gv.innerBorder) {
+				let leftBorderPx = this._gv.fieldSize * this._gv.innerBorder
+				let minDisplayX = 0;
+				let distanceFromLeft = this.posX;
+
+				if (this.posX > leftBorderPx || this._gv.displayX == minDisplayX && distanceFromLeft <= leftBorderPx) {
 					if (this.canMove(direction)) {
 						this.posX -= this._gv.fieldSize;
 					}
@@ -124,7 +141,11 @@ export default class Player {
 				}
 				break;
 			case 'right':
-				if (this.posX < this._gv.canvasWidth - ((this._gv.innerBorder + 1) * this._gv.fieldSize)) {
+				let rightBorderPx = this._gv.canvasWidth - ((this._gv.innerBorder + 1) * this._gv.fieldSize)
+				let distanceFromRight = this._gv.canvasWidth - (this._gv.canvasWidth - this.posX);
+				let maxDisplayX = this._gv.levelWidth - this._gv.fieldsPerWidth;
+
+				if (this.posX < rightBorderPx || this._gv.displayX == maxDisplayX && distanceFromRight >= rightBorderPx) {
 					if (this.canMove(direction)) {
 						this.posX += this._gv.fieldSize;
 					}

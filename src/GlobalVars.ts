@@ -31,5 +31,5 @@ export default class GlobalVars {
 	> = []
 
 	// Player variables
-	innerBorder: number = 2; // fields limiting the inner area of player movement
+	innerBorder: number = 3; // fields limiting the inner area of player movement
 }

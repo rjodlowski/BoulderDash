@@ -87,7 +87,7 @@ export default class Board {
 		this._gv.displayY + this._gv.fieldsPerHeight >= this.level.length - 1 ? this.displaysWalls.bottom = true : this.displaysWalls.bottom = false;
 		this._gv.displayX == 0 ? this.displaysWalls.left = true : this.displaysWalls.left = false;
 		this._gv.displayX + this._gv.fieldsPerWidth >= this.level[0].length - 1 ? this.displaysWalls.right = true : this.displaysWalls.right = false;
-		console.log(this.displaysWalls);
+		// console.log(this.displaysWalls);
 		this.displayScene();
 	}
 
