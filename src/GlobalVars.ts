@@ -8,7 +8,8 @@ export default class GlobalVars {
 	canvas: HTMLCanvasElement;
 	ctx: CanvasRenderingContext2D;
 
-	currLevel: number = 0; //number of the current level;
+	currLevelNumber: number = 0; // Mumber of the current level
+	currLevel: number[][] = [[]]; // Current level
 	levelWidth: number; // Width of a level in fields
 	levelHeight: number;
 

@@ -13,6 +13,8 @@ export default class Player {
 	posX: number;
 	posY: number;
 
+	groundShifted: boolean;
+
 	constructor(gv: GlobalVars, color: string, startX: number, startY: number) {
 		this._gv = gv;
 
@@ -23,6 +25,8 @@ export default class Player {
 
 		this.posX = startX;
 		this.posY = startY;
+
+		this.groundShifted = false;
 
 		this.draw(this.posX, this.posY);
 	}
@@ -110,6 +114,7 @@ export default class Player {
 				} else {
 					console.log("Shift border top");
 					Board.movePartOfScene(this._gv, "top")
+					this.groundShifted = true;
 				}
 				break;
 			case 'down':
@@ -124,6 +129,7 @@ export default class Player {
 				} else {
 					console.log("Shift border bottom");
 					Board.movePartOfScene(this._gv, "bottom")
+					this.groundShifted = true;
 				}
 				break;
 			case 'left':
@@ -138,6 +144,7 @@ export default class Player {
 				} else {
 					console.log("Shift border left");
 					Board.movePartOfScene(this._gv, "left")
+					this.groundShifted = true;
 				}
 				break;
 			case 'right':
@@ -152,16 +159,48 @@ export default class Player {
 				} else {
 					console.log("Shift border right");
 					Board.movePartOfScene(this._gv, "right")
+					this.groundShifted = true;
 				}
 				break;
 			default:
 				console.log("Unknown direction");
 		}
-		console.log(this._gv.displayX, this._gv.displayY);
+
+		this.checkIfWalkedOnSth();
+	}
+
+	checkIfWalkedOnSth() {
+		let found = this._gv.allElements.filter((el) => { return el.x == this.posX && el.y == this.posY })
+		// console.log(found, this._gv.allElements, this.posX, this.posY);
+
+		if (found.length > 0) {
+			let name = found[0].constructor.name
+			switch (name) {
+				case "Dirt":
+					let index = this._gv.allElements.indexOf(found[0])
+					Board.removeEl(
+						this._gv,
+						index,
+						found[0].x / this._gv.fieldSize,
+						found[0].y / this._gv.fieldSize,
+					)
+					break;
+
+				default:
+					console.log(`Deleting: ${name} - no case`);
+					break;
+			}
+		}
 	}
 
 	update() {
 		this.draw(this.posX, this.posY);
+
+		// Handles the ground shifting exception
+		if (this.groundShifted) {
+			this.checkIfWalkedOnSth();
+			this.groundShifted = false;
+		}
 	}
 
 }

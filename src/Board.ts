@@ -15,8 +15,6 @@ export default class Board {
 		right: boolean,
 	}
 
-	level: number[][];
-
 	public static playerMoved: boolean = false;
 
 	constructor(gv: GlobalVars) {
@@ -53,10 +51,10 @@ export default class Board {
 	 * @param levelId 
 	 */
 	setLevel(levelId: number) {
-		this._gv.currLevel = levelId;
-		this.level = levels[this._gv.currLevel];
-		this._gv.levelHeight = this.level.length;
-		this._gv.levelWidth = this.level[0].length;
+		this._gv.currLevelNumber = levelId;
+		this._gv.currLevel = levels[this._gv.currLevelNumber];
+		this._gv.levelHeight = this._gv.currLevel.length;
+		this._gv.levelWidth = this._gv.currLevel[0].length;
 	}
 
 	/**
@@ -68,10 +66,10 @@ export default class Board {
 		for (let y = 0; y < this._gv.fieldsPerHeight; y++) {
 			for (let x = 0; x < this._gv.fieldsPerWidth; x++) {
 				if (
-					y + this._gv.displayY < this.level.length &&
-					x + this._gv.displayX < this.level[0].length
+					y + this._gv.displayY < this._gv.currLevel.length &&
+					x + this._gv.displayX < this._gv.currLevel[0].length
 				) {
-					partOfScene[y][x] = this.level[y + this._gv.displayY][x + this._gv.displayX];
+					partOfScene[y][x] = this._gv.currLevel[y + this._gv.displayY][x + this._gv.displayX];
 				}
 			}
 		}
@@ -84,9 +82,9 @@ export default class Board {
 	 */
 	checkWalls() {
 		this._gv.displayY == 0 ? this.displaysWalls.top = true : this.displaysWalls.top = false;
-		this._gv.displayY + this._gv.fieldsPerHeight >= this.level.length - 1 ? this.displaysWalls.bottom = true : this.displaysWalls.bottom = false;
+		this._gv.displayY + this._gv.fieldsPerHeight >= this._gv.currLevel.length - 1 ? this.displaysWalls.bottom = true : this.displaysWalls.bottom = false;
 		this._gv.displayX == 0 ? this.displaysWalls.left = true : this.displaysWalls.left = false;
-		this._gv.displayX + this._gv.fieldsPerWidth >= this.level[0].length - 1 ? this.displaysWalls.right = true : this.displaysWalls.right = false;
+		this._gv.displayX + this._gv.fieldsPerWidth >= this._gv.currLevel[0].length - 1 ? this.displaysWalls.right = true : this.displaysWalls.right = false;
 		// console.log(this.displaysWalls);
 		this.displayScene();
 	}
@@ -180,10 +178,19 @@ export default class Board {
 		}
 	}
 
+	public static removeEl(gv: GlobalVars, index: number, x: number, y: number) {
+		// Remove from allElements
+		gv.allElements.splice(index, 1);
+
+		// Remove from level
+		gv.currLevel[gv.displayY + y][gv.displayX + x] = 0
+	}
+
 	update() {
 		// update all static elements on the board
 
 		if (Board.playerMoved) {
+			// Player.checkIfWalkedOnSth(this._gv, );
 			this.getPartOfScene();
 			this._gv.allElements = []
 			this.displayScene();
