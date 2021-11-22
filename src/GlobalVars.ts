@@ -1,3 +1,7 @@
+import BorderWall from "./entities/BorderWall";
+import Dirt from "./entities/Dirt";
+import InnerWall from "./entities/InnerWall";
+
 export default class GlobalVars {
 	// HTML elements
 	app: HTMLDivElement = document.getElementById("app") as HTMLDivElement;
@@ -18,6 +22,13 @@ export default class GlobalVars {
 	// Board display variables
 	displayX: number = 0; // x of the top left field of a displayed background
 	displayY: number = 0; // y
+
+	scenePart: number[][] = [[]]
+	allElements: Array<
+		BorderWall |
+		Dirt |
+		InnerWall
+	> = []
 
 	// Player variables
 	innerBorder: number = 2; // fields limiting the inner area of player movement

@@ -6,12 +6,14 @@ export default class Dirt {
 	x: number;
 	y: number;
 	color: string;
+	passable: boolean;
 
 	constructor(gv: GlobalVars, color: string, x: number, y: number,) {
 		this._gv = gv;
 		this.x = x;
 		this.y = y;
 		this.color = color;
+		this.passable = true;
 
 		this.draw(this.x, this.y);
 	}

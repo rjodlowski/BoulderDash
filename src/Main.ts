@@ -14,7 +14,7 @@ export default class Main {
 	constructor() {
 		this._gv = new GlobalVars();
 		this._board = new Board(this._gv);
-		this._player = new Player(this._gv, "red", 80, 80);
+		this._player = new Player(this._gv, "red", 120, 120);
 		this._keyboard = new Keyboard(this._gv, this._player);
 		// this._canvasTest = new CanvasTest();
 

@@ -7,14 +7,6 @@ import levels from "./levels/Levels";
 export default class Board {
 	_gv: GlobalVars;
 
-	// All level elements
-	scenePart: number[][] = [[]];
-	allElements: {
-		borderWalls: BorderWall[],
-		innerWalls: InnerWall[],
-		dirt: Dirt[],
-	}
-
 	// part of scene displays border walls
 	displaysWalls: {
 		top: boolean,
@@ -29,13 +21,6 @@ export default class Board {
 
 	constructor(gv: GlobalVars) {
 		this._gv = gv;
-		this.allElements = {
-			borderWalls: [],
-			innerWalls: [],
-			dirt: [],
-		}
-		// this.level = levels[this._gv.currLevel];
-		// console.log(this.level);
 
 		this.displaysWalls = {
 			top: false,
@@ -44,9 +29,6 @@ export default class Board {
 			right: false,
 		}
 
-
-		// console.log(this.level1);
-
 		this.setLevel(0);
 		this.createCanvas();
 		this.checkWalls();
@@ -54,6 +36,9 @@ export default class Board {
 		this.displayScene();
 	}
 
+	/**
+	 * Creates canvas element and drawing context
+	 */
 	createCanvas() {
 		let canvas: HTMLCanvasElement = document.createElement("canvas") as HTMLCanvasElement;
 		canvas.width = this._gv.canvasWidth;
@@ -90,7 +75,7 @@ export default class Board {
 				}
 			}
 		}
-		this.scenePart = partOfScene;
+		this._gv.scenePart = partOfScene;
 		// console.log(this.scenePart);
 	}
 
@@ -156,100 +141,58 @@ export default class Board {
 	 */
 	displayScene() {
 		// Save a part of the scene to the variable
-		for (let y: number = 0; y < this.scenePart.length; y++) {
-			for (let x: number = 0; x < this.scenePart[0].length; x++) {
-				let entityNumber: number = this.scenePart[y][x];
-				// console.log(entityNumber);
+		for (let y: number = 0; y < this._gv.scenePart.length; y++) {
+			for (let x: number = 0; x < this._gv.scenePart[0].length; x++) {
+				let entityNumber: number | BorderWall = this._gv.scenePart[y][x];
 				switch (entityNumber) {
 					case 0: // Empty field
-						// Do nothing
 						break;
 					case 1: // Border wall
-						// find if el exists
-						let borderFound: BorderWall[] = this.allElements.borderWalls.filter((el) => { return el.x == x && el.y == y });
-						// console.log(borderFound);
-
-						if (borderFound.length == 0) {
-							this.allElements.borderWalls.push(new BorderWall(
-								this._gv,
-								"black",
-								x * this._gv.fieldSize,
-								y * this._gv.fieldSize,
-							));
-						} else {
-							// Sth can break here tho
-							console.log("border wall exists");
-						}
+						this._gv.allElements.push(new BorderWall(
+							this._gv,
+							"black",
+							x * this._gv.fieldSize,
+							y * this._gv.fieldSize,
+						));
 						break;
 					case 2: // Inner wall
-						let innerFound: InnerWall[] = this.allElements.innerWalls.filter((el) => { return el.x == x && el.y == y });
-						// console.log(innerFound);
-
-						if (innerFound.length == 0) {
-							this.allElements.innerWalls.push(new InnerWall(
-								this._gv,
-								"gray",
-								x * this._gv.fieldSize,
-								y * this._gv.fieldSize,
-							));
-						} else {
-							console.log("Inner wall exists");
-						}
+						this._gv.allElements.push(new InnerWall(
+							this._gv,
+							"gray",
+							x * this._gv.fieldSize,
+							y * this._gv.fieldSize,
+						));
 						break;
 					case 3: // 
-						let dirtFound: InnerWall[] = this.allElements.dirt.filter((el) => { return el.x == x && el.y == y });
-
-						if (dirtFound.length == 0) {
-							this.allElements.dirt.push(new Dirt(
-								this._gv,
-								"brown",
-								x * this._gv.fieldSize,
-								y * this._gv.fieldSize,
-							));
-						} else {
-							console.log("dirt exists");
-						}
-
-						break;
-					case 4:
-
+						this._gv.allElements.push(new Dirt(
+							this._gv,
+							"brown",
+							x * this._gv.fieldSize,
+							y * this._gv.fieldSize,
+						));
 						break;
 
 					default:
 						console.log("Unknown entity type");
 						break;
 				}
-
 			}
-			// console.log(this.allElements);
 		}
 	}
 
 	update() {
 		// update all static elements on the board
-		this.getPartOfScene();
 
 		if (Board.playerMoved) {
-			console.log("Player moved");
+			this.getPartOfScene();
+			this._gv.allElements = []
 			this.displayScene();
 			Board.playerMoved = false;
 		}
 
-		// Border walls
-		for (let i: number = 0; i < this.allElements.borderWalls.length; i++) {
-			this.allElements.borderWalls[i].update();
+		// Update allElements on board
+		for (let i: number = 0; i < this._gv.allElements.length; i++) {
+			this._gv.allElements[i].update();
 		}
-
-		// Inner walls
-		for (let i: number = 0; i < this.allElements.innerWalls.length; i++) {
-			this.allElements.innerWalls[i].update();
-		}
-
-		// Dirt
-		for (let i: number = 0; i < this.allElements.dirt.length; i++) {
-			this.allElements.dirt[i].update();
-		}
-
 	}
-
 }

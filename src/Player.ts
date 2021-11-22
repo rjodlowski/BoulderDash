@@ -40,15 +40,64 @@ export default class Player {
 
 	}
 
-	move(direction: string) {
-		// If player does not collide with unpassable entity (e.g. wall)
+	/**
+	 * Checks if a plater can move in the specified direction
+	 * @param direction up | down | left | right
+	 */
+	canMove(direction: string): boolean {
+		switch (direction) {
+			case "up":
+				let elUp = this._gv.allElements.filter((el) => { return el.x == this.posX && el.y == this.posY - this._gv.fieldSize })
+				if (elUp.length > 0) {
+					if (!elUp[0].passable) {
+						return false;
+					}
+				}
+				break;
+			case "down":
+				let elDown = this._gv.allElements.filter((el) => { return el.x == this.posX && el.y == this.posY + this._gv.fieldSize })
+				if (elDown.length > 0) {
+					if (!elDown[0].passable) {
+						return false;
+					}
+				}
+				break;
+			case "left":
+				let elLeft = this._gv.allElements.filter((el) => { return el.x == this.posX - this._gv.fieldSize && el.y == this.posY })
+				if (elLeft.length > 0) {
+					if (!elLeft[0].passable) {
+						return false;
+					}
+				}
+				break;
+			case "right":
+				let elRight = this._gv.allElements.filter((el) => { return el.x == this.posX + this._gv.fieldSize && el.y == this.posY })
+				if (elRight.length > 0) {
+					if (!elRight[0].passable) {
+						return false;
+					}
+				}
+				break;
+			default:
+				console.log("Unknown direction");
+				break;
+		}
+		return true;
+	}
 
+	/**
+	 * Moves the player
+	 * @param direction up | down | left | right 
+	 */
+	move(direction: string) {
 		Board.playerMoved = true;
 
 		switch (direction) {
 			case 'up':
 				if (this.posY > this._gv.fieldSize * this._gv.innerBorder) {
-					this.posY -= this._gv.fieldSize;
+					if (this.canMove(direction)) {
+						this.posY -= this._gv.fieldSize;
+					}
 				} else {
 					console.log("Shift border top");
 					Board.movePartOfScene(this._gv, "top")
@@ -56,7 +105,9 @@ export default class Player {
 				break;
 			case 'down':
 				if (this.posY < this._gv.canvasHeight - ((this._gv.innerBorder + 1) * this._gv.fieldSize)) {
-					this.posY += this._gv.fieldSize;
+					if (this.canMove(direction)) {
+						this.posY += this._gv.fieldSize;
+					}
 				} else {
 					console.log("Shift border bottom");
 					Board.movePartOfScene(this._gv, "bottom")
@@ -64,7 +115,9 @@ export default class Player {
 				break;
 			case 'left':
 				if (this.posX > this._gv.fieldSize * this._gv.innerBorder) {
-					this.posX -= this._gv.fieldSize;
+					if (this.canMove(direction)) {
+						this.posX -= this._gv.fieldSize;
+					}
 				} else {
 					console.log("Shift border left");
 					Board.movePartOfScene(this._gv, "left")
@@ -72,7 +125,9 @@ export default class Player {
 				break;
 			case 'right':
 				if (this.posX < this._gv.canvasWidth - ((this._gv.innerBorder + 1) * this._gv.fieldSize)) {
-					this.posX += this._gv.fieldSize;
+					if (this.canMove(direction)) {
+						this.posX += this._gv.fieldSize;
+					}
 				} else {
 					console.log("Shift border right");
 					Board.movePartOfScene(this._gv, "right")
@@ -82,7 +137,6 @@ export default class Player {
 				console.log("Unknown direction");
 		}
 		console.log(this._gv.displayX, this._gv.displayY);
-
 	}
 
 	update() {
