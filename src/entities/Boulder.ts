@@ -15,6 +15,7 @@ export default class Boulder {
 
 	playerPassable: boolean = false;
 	entityPassable: boolean = false;
+	// canBeCrushed: boolean = false;
 	color: string = "yellow";
 
 	constructor(gv: GlobalVars, x: number, y: number) {
@@ -55,6 +56,66 @@ export default class Boulder {
 				break;
 		}
 	}
+
+	canFall(): boolean {
+		console.log(this);
+
+		if (this.absY < this._gv.levelHeight - 1) {
+			let fieldBeneath;
+
+			console.log(this._gv.allElements);
+
+			// Find an object of a field beneath in static and dynamic table
+			let foundStatic = this._gv.allElements.filter((el) => {
+				return el.relX == this.relX && el.relY == this.relY + this._gv.fieldSize
+			})
+			console.log(foundStatic);
+
+			if (foundStatic.length == 0) {
+				let foundDynamic = this._gv.allDynamic.filter((el) => {
+					return el.relX == this.relX && el.relY == this.relY + this._gv.fieldSize;
+				})
+				console.log(foundDynamic);
+				if (foundDynamic.length > 0) {
+					fieldBeneath = foundDynamic[0];
+				}
+			} else {
+				fieldBeneath = foundStatic[0];
+			}
+			console.log(fieldBeneath);
+
+			// Examine the field beneath
+			if (fieldBeneath != undefined) {
+				return fieldBeneath.entityPassable;
+				// if (fieldBeneath.canBeCrushed) {
+				// 	fieldBeneath.crush()
+				// }
+			}
+		}
+
+		return true;
+	}
+
+	/**
+	 * Movement affected by gravity
+	 */
+	fall() {
+		console.log(this.canFall());
+
+		if (this.canFall()) {
+			// Fall relatively
+			this.relY += this._gv.fieldSize;
+			// Fall absolutely
+			this._gv.currLevel[this.absY][this.absX] = 0
+			this._gv.currLevel[this.absY + 1][this.absX] = 4;
+			this.absY++;
+		}
+	}
+
+	/**
+	 * Rolls down the side when stacked
+	 */
+	rollDown() { }
 
 	update() {
 		this.draw(this.relX, this.relY);

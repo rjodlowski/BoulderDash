@@ -34,6 +34,7 @@ export default class Board {
 		this.getPartOfScene();
 		this.displayScene();
 		this.generateBoulders();
+		this.enableGravity();
 	}
 
 	/**
@@ -215,6 +216,16 @@ export default class Board {
 			}
 		}
 		// console.log("allDynamic: ", this._gv.allDynamic);
+	}
+
+	enableGravity() {
+		// setInterval(() => {
+		console.log("gravity")
+		let boulders = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
+		for (let i = 0; i < boulders.length; i++) {
+			boulders[i].fall();
+		}
+		// }, 1000)
 	}
 
 	public static removeEl(gv: GlobalVars, index: number, x: number, y: number) {
