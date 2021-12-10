@@ -1,4 +1,5 @@
 import BorderWall from "./entities/BorderWall";
+import Boulder from "./entities/Boulder";
 import Dirt from "./entities/Dirt";
 import InnerWall from "./entities/InnerWall";
 import GlobalVars from "./GlobalVars";
@@ -32,6 +33,7 @@ export default class Board {
 		this.checkWalls();
 		this.getPartOfScene();
 		this.displayScene();
+		this.generateBoulders();
 	}
 
 	/**
@@ -91,13 +93,15 @@ export default class Board {
 
 	/** 
 	 * Move the part of the scene in the given direction
+	 * @param direction top | bottom | left | right
 	 */
 	public static movePartOfScene(gv: GlobalVars, direction: string) {
-		console.log(direction);
+		// console.log(direction);
 		switch (direction) {
 			case "top":
 				if (gv.displayY > 0) {
 					gv.displayY--;
+					Board.moveDynamicMandatory(gv, "top");
 				} else {
 					console.log("Can't move up", gv.displayY);
 				}
@@ -106,6 +110,7 @@ export default class Board {
 			case "bottom":
 				if (gv.displayY + gv.fieldsPerHeight <= gv.levelHeight - 1) {
 					gv.displayY++;
+					Board.moveDynamicMandatory(gv, "bottom");
 				} else {
 					console.log("Can't move down", gv.displayY);
 				}
@@ -114,6 +119,7 @@ export default class Board {
 			case "left":
 				if (gv.displayX > 0) {
 					gv.displayX--;
+					Board.moveDynamicMandatory(gv, "left");
 				} else {
 					console.log("Can't move left", gv.displayX);
 				}
@@ -122,6 +128,7 @@ export default class Board {
 			case "right":
 				if (gv.displayX + gv.fieldsPerWidth <= gv.levelWidth - 1) {
 					gv.displayX++;
+					Board.moveDynamicMandatory(gv, "right");
 				} else {
 					console.log("Can't move right", gv.displayX);
 				}
@@ -133,6 +140,18 @@ export default class Board {
 		}
 	}
 
+	/**
+	 * Moves all dynamic entities when the board shifts
+	 * @param direction top | bottom | left | right
+	 */
+	public static moveDynamicMandatory(gv: GlobalVars, direction: string) {
+		// console.log("Moving all dynamic entities: ", direction);
+
+		for (let i = 0; i < gv.allDynamic.length; i++) {
+			gv.allDynamic[i].mandatoryMove(direction)
+		}
+	}
+
 
 	/**
 	 * Displays a part of the scene; Renders items represented by numbers in a level
@@ -141,7 +160,7 @@ export default class Board {
 		// Save a part of the scene to the variable
 		for (let y: number = 0; y < this._gv.scenePart.length; y++) {
 			for (let x: number = 0; x < this._gv.scenePart[0].length; x++) {
-				let entityNumber: number | BorderWall = this._gv.scenePart[y][x];
+				let entityNumber: number = this._gv.scenePart[y][x];
 				switch (entityNumber) {
 					case 0: // Empty field
 						break;
@@ -169,6 +188,8 @@ export default class Board {
 							y * this._gv.fieldSize,
 						));
 						break;
+					case 4: // Boulder - not created over and over again
+						break;
 
 					default:
 						console.log("Unknown entity type");
@@ -176,6 +197,24 @@ export default class Board {
 				}
 			}
 		}
+	}
+
+	/**
+	 * Generates all boulders in the level
+	 */
+	generateBoulders() {
+		for (let y: number = 0; y < this._gv.levelHeight; y++) {
+			for (let x: number = 0; x < this._gv.levelWidth; x++) {
+				if (this._gv.currLevel[y][x] == 4) {
+					this._gv.allDynamic.push(new Boulder(
+						this._gv,
+						x * this._gv.fieldSize,
+						y * this._gv.fieldSize
+					))
+				}
+			}
+		}
+		// console.log("allDynamic: ", this._gv.allDynamic);
 	}
 
 	public static removeEl(gv: GlobalVars, index: number, x: number, y: number) {
@@ -187,6 +226,7 @@ export default class Board {
 	}
 
 	update() {
+
 		// update all static elements on the board
 
 		if (Board.playerMoved) {
@@ -200,6 +240,11 @@ export default class Board {
 		// Update allElements on board
 		for (let i: number = 0; i < this._gv.allElements.length; i++) {
 			this._gv.allElements[i].update();
+		}
+
+		// Update all dynamic elements
+		for (let i: number = 0; i < this._gv.allDynamic.length; i++) {
+			this._gv.allDynamic[i].update();
 		}
 	}
 }

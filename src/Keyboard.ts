@@ -26,6 +26,8 @@ export default class Keyboard {
 				this._player.move("up")
 			} else if (key == "s" || key == "ArrowDown") {
 				this._player.move("down")
+			} else if (key == " ") {
+				this._gv.runRender = !this._gv.runRender;
 			}
 		}
 	}

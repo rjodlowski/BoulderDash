@@ -66,11 +66,23 @@ export default class Player {
 						return false;
 					}
 				}
+				let elUpDyn = this._gv.allDynamic.filter((el) => { return el.relX == this.relX && el.relY == this.relY - this._gv.fieldSize })
+				if (elUpDyn.length > 0) {
+					if (!elUpDyn[0].playerPassable) {
+						return false;
+					}
+				}
 				break;
 			case "down":
 				let elDown = this._gv.allElements.filter((el) => { return el.relX == this.relX && el.relY == this.relY + this._gv.fieldSize })
 				if (elDown.length > 0) {
 					if (!elDown[0].playerPassable) {
+						return false;
+					}
+				}
+				let elDownDyn = this._gv.allDynamic.filter((el) => { return el.relX == this.relX && el.relY == this.relY + this._gv.fieldSize })
+				if (elDownDyn.length > 0) {
+					if (!elDownDyn[0].playerPassable) {
 						return false;
 					}
 				}
@@ -82,11 +94,23 @@ export default class Player {
 						return false;
 					}
 				}
+				let elLeftDyn = this._gv.allDynamic.filter((el) => { return el.relX == this.relX - this._gv.fieldSize && el.relY == this.relY })
+				if (elLeftDyn.length > 0) {
+					if (!elLeftDyn[0].playerPassable) {
+						return false;
+					}
+				}
 				break;
 			case "right":
 				let elRight = this._gv.allElements.filter((el) => { return el.relX == this.relX + this._gv.fieldSize && el.relY == this.relY })
 				if (elRight.length > 0) {
 					if (!elRight[0].playerPassable) {
+						return false;
+					}
+				}
+				let elRightDyn = this._gv.allDynamic.filter((el) => { return el.relX == this.relX + this._gv.fieldSize && el.relY == this.relY })
+				if (elRightDyn.length > 0) {
+					if (!elRightDyn[0].playerPassable) {
 						return false;
 					}
 				}

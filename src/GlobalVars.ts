@@ -1,4 +1,5 @@
 import BorderWall from "./entities/BorderWall";
+import Boulder from "./entities/Boulder";
 import Dirt from "./entities/Dirt";
 import InnerWall from "./entities/InnerWall";
 
@@ -7,6 +8,8 @@ export default class GlobalVars {
 	app: HTMLDivElement = document.getElementById("app") as HTMLDivElement;
 	canvas: HTMLCanvasElement;
 	ctx: CanvasRenderingContext2D;
+
+	runRender: boolean = true; // Determines if the main board render function should be ran
 
 	currLevelNumber: number = 0; // Mumber of the current level
 	currLevel: number[][] = [[]]; // Current level
@@ -24,13 +27,18 @@ export default class GlobalVars {
 	displayX: number = 0; // x of the top left field of a displayed background
 	displayY: number = 0; // y
 
+	// Player variables
+	innerBorder: number = 3; // fields limiting the inner area of player movement
+
 	scenePart: number[][] = [[]]
+	// All static elements on the board
 	allElements: Array<
 		BorderWall |
 		Dirt |
 		InnerWall
 	> = []
 
-	// Player variables
-	innerBorder: number = 3; // fields limiting the inner area of player movement
+	allDynamic: Array<
+		Boulder
+	> = []
 }
