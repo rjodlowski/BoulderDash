@@ -3,22 +3,26 @@ import GlobalVars from "../GlobalVars";
 // Example object on the canvas, not the part of final project
 export default class Dirt {
 	_gv: GlobalVars;
-	x: number; // [px]
-	y: number; // [px]
+
+	// Relative positions -> [px]
+	relX: number;
+	relY: number;
+
 	color: string;
-	passable: boolean;
-	deleted: boolean;
+
+	deleted: boolean = false;
+
+	playerPassable: boolean = true;
+	entityPassable: boolean = false;
 
 	constructor(gv: GlobalVars, color: string, x: number, y: number,) {
 		this._gv = gv;
-		this.x = x;
-		this.y = y;
+		this.relX = x;
+		this.relY = y;
 		this.color = color;
-		this.passable = true;
-		this.deleted = false;
 
 		if (!this.deleted) {
-			this.draw(this.x, this.y);
+			this.draw(this.relX, this.relY);
 		}
 	}
 
@@ -33,6 +37,6 @@ export default class Dirt {
 	}
 
 	update() {
-		this.draw(this.x, this.y);
+		this.draw(this.relX, this.relY);
 	}
 }

@@ -9,9 +9,16 @@ export default class Player {
 	height: number;
 	color: string;
 
-	// Positions
-	posX: number;
-	posY: number;
+	// Relative positions -> [px]
+	relX: number;
+	relY: number;
+
+	// Absolute positions
+	absX: number;
+	absY: number;
+
+	playerPassable: boolean = true;
+	entityPassable: boolean = true;
 
 	groundShifted: boolean;
 
@@ -23,30 +30,27 @@ export default class Player {
 		this.height = this._gv.fieldSize;
 		this.color = color;
 
-		this.posX = startX;
-		this.posY = startY;
+		this.relX = startX;
+		this.relY = startY;
 
 		this.groundShifted = false;
 
-		this.draw(this.posX, this.posY);
+		this.draw(this.relX, this.relY);
 	}
 
 	/**
-	 * Draw the player
-	 * @param posX [px]
-	 * @param posY [px]
+	 * Draw the player using relative positions [px]
+	 * @param relX
+	 * @param relY
 	 */
-	draw(posX: number, posY: number) {
-		// console.log("drawing player")
-
+	draw(relX: number, relY: number) {
 		this._gv.ctx.fillStyle = this.color;
 		this._gv.ctx.fillRect(
-			posX,
-			posY,
+			relX,
+			relY,
 			this._gv.fieldSize,
 			this._gv.fieldSize,
 		)
-
 	}
 
 	/**
@@ -56,33 +60,33 @@ export default class Player {
 	canMove(direction: string): boolean {
 		switch (direction) {
 			case "up":
-				let elUp = this._gv.allElements.filter((el) => { return el.x == this.posX && el.y == this.posY - this._gv.fieldSize })
+				let elUp = this._gv.allElements.filter((el) => { return el.relX == this.relX && el.relY == this.relY - this._gv.fieldSize })
 				if (elUp.length > 0) {
-					if (!elUp[0].passable) {
+					if (!elUp[0].playerPassable) {
 						return false;
 					}
 				}
 				break;
 			case "down":
-				let elDown = this._gv.allElements.filter((el) => { return el.x == this.posX && el.y == this.posY + this._gv.fieldSize })
+				let elDown = this._gv.allElements.filter((el) => { return el.relX == this.relX && el.relY == this.relY + this._gv.fieldSize })
 				if (elDown.length > 0) {
-					if (!elDown[0].passable) {
+					if (!elDown[0].playerPassable) {
 						return false;
 					}
 				}
 				break;
 			case "left":
-				let elLeft = this._gv.allElements.filter((el) => { return el.x == this.posX - this._gv.fieldSize && el.y == this.posY })
+				let elLeft = this._gv.allElements.filter((el) => { return el.relX == this.relX - this._gv.fieldSize && el.relY == this.relY })
 				if (elLeft.length > 0) {
-					if (!elLeft[0].passable) {
+					if (!elLeft[0].playerPassable) {
 						return false;
 					}
 				}
 				break;
 			case "right":
-				let elRight = this._gv.allElements.filter((el) => { return el.x == this.posX + this._gv.fieldSize && el.y == this.posY })
+				let elRight = this._gv.allElements.filter((el) => { return el.relX == this.relX + this._gv.fieldSize && el.relY == this.relY })
 				if (elRight.length > 0) {
-					if (!elRight[0].passable) {
+					if (!elRight[0].playerPassable) {
 						return false;
 					}
 				}
@@ -105,11 +109,11 @@ export default class Player {
 			case 'up':
 				let upperBorderPx = this._gv.fieldSize * this._gv.innerBorder
 				let minDisplayY = 0
-				let distanceFromTop = this.posY
+				let distanceFromTop = this.relY
 
-				if (this.posY > upperBorderPx || this._gv.displayY == minDisplayY && distanceFromTop <= upperBorderPx) {
+				if (this.relY > upperBorderPx || this._gv.displayY == minDisplayY && distanceFromTop <= upperBorderPx) {
 					if (this.canMove(direction)) {
-						this.posY -= this._gv.fieldSize;
+						this.relY -= this._gv.fieldSize;
 					}
 				} else {
 					console.log("Shift border top");
@@ -119,12 +123,12 @@ export default class Player {
 				break;
 			case 'down':
 				let lowerBorderPx = this._gv.canvasHeight - ((this._gv.innerBorder + 1) * this._gv.fieldSize)
-				let distanceFromBottom = this._gv.canvasHeight - (this._gv.canvasHeight - this.posY)
+				let distanceFromBottom = this._gv.canvasHeight - (this._gv.canvasHeight - this.relY)
 				let maxDisplayY = this._gv.levelHeight - this._gv.fieldsPerHeight
 
-				if (this.posY < lowerBorderPx || this._gv.displayY == maxDisplayY && distanceFromBottom >= lowerBorderPx) {
+				if (this.relY < lowerBorderPx || this._gv.displayY == maxDisplayY && distanceFromBottom >= lowerBorderPx) {
 					if (this.canMove(direction)) {
-						this.posY += this._gv.fieldSize;
+						this.relY += this._gv.fieldSize;
 					}
 				} else {
 					console.log("Shift border bottom");
@@ -135,11 +139,11 @@ export default class Player {
 			case 'left':
 				let leftBorderPx = this._gv.fieldSize * this._gv.innerBorder
 				let minDisplayX = 0;
-				let distanceFromLeft = this.posX;
+				let distanceFromLeft = this.relX;
 
-				if (this.posX > leftBorderPx || this._gv.displayX == minDisplayX && distanceFromLeft <= leftBorderPx) {
+				if (this.relX > leftBorderPx || this._gv.displayX == minDisplayX && distanceFromLeft <= leftBorderPx) {
 					if (this.canMove(direction)) {
-						this.posX -= this._gv.fieldSize;
+						this.relX -= this._gv.fieldSize;
 					}
 				} else {
 					console.log("Shift border left");
@@ -149,12 +153,12 @@ export default class Player {
 				break;
 			case 'right':
 				let rightBorderPx = this._gv.canvasWidth - ((this._gv.innerBorder + 1) * this._gv.fieldSize)
-				let distanceFromRight = this._gv.canvasWidth - (this._gv.canvasWidth - this.posX);
+				let distanceFromRight = this._gv.canvasWidth - (this._gv.canvasWidth - this.relX);
 				let maxDisplayX = this._gv.levelWidth - this._gv.fieldsPerWidth;
 
-				if (this.posX < rightBorderPx || this._gv.displayX == maxDisplayX && distanceFromRight >= rightBorderPx) {
+				if (this.relX < rightBorderPx || this._gv.displayX == maxDisplayX && distanceFromRight >= rightBorderPx) {
 					if (this.canMove(direction)) {
-						this.posX += this._gv.fieldSize;
+						this.relX += this._gv.fieldSize;
 					}
 				} else {
 					console.log("Shift border right");
@@ -170,7 +174,7 @@ export default class Player {
 	}
 
 	checkIfWalkedOnSth() {
-		let found = this._gv.allElements.filter((el) => { return el.x == this.posX && el.y == this.posY })
+		let found = this._gv.allElements.filter((el) => { return el.relX == this.relX && el.relY == this.relY })
 		// console.log(found, this._gv.allElements, this.posX, this.posY);
 
 		if (found.length > 0) {
@@ -181,8 +185,8 @@ export default class Player {
 					Board.removeEl(
 						this._gv,
 						index,
-						found[0].x / this._gv.fieldSize,
-						found[0].y / this._gv.fieldSize,
+						found[0].relX / this._gv.fieldSize,
+						found[0].relY / this._gv.fieldSize,
 					)
 					break;
 
@@ -194,7 +198,7 @@ export default class Player {
 	}
 
 	update() {
-		this.draw(this.posX, this.posY);
+		this.draw(this.relX, this.relY);
 
 		// Handles the ground shifting exception
 		if (this.groundShifted) {

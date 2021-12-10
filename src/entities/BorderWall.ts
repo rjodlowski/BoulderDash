@@ -3,19 +3,23 @@ import GlobalVars from "../GlobalVars";
 // Example object on the canvas, not the part of final project
 export default class BorderWall {
 	_gv: GlobalVars;
-	x: number;
-	y: number;
+
+	// Relative positions -> [px]
+	relX: number;
+	relY: number;
+
 	color: string;
-	passable: boolean;
+
+	playerPassable: boolean = false;
+	entityPassable: boolean = false;
 
 	constructor(gv: GlobalVars, color: string, x: number, y: number,) {
 		this._gv = gv;
-		this.x = x;
-		this.y = y;
+		this.relX = x;
+		this.relY = y;
 		this.color = color;
-		this.passable = false;
 
-		this.draw(this.x, this.y);
+		this.draw(this.relX, this.relY);
 	}
 
 	draw(posX: number, posY: number) {
@@ -29,6 +33,6 @@ export default class BorderWall {
 	}
 
 	update() {
-		this.draw(this.x, this.y);
+		this.draw(this.relX, this.relY);
 	}
 }
