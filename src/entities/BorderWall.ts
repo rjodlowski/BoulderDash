@@ -7,6 +7,10 @@ export default class BorderWall {
 	// Relative positions -> [px]
 	relX: number;
 	relY: number;
+	// Absolute position
+	absX: number // level coord
+	absY: number // level coord
+
 
 	color: string;
 
@@ -17,16 +21,19 @@ export default class BorderWall {
 		this._gv = gv;
 		this.relX = x;
 		this.relY = y;
+		this.absX = (this.relX / this._gv.fieldSize) - this._gv.displayX;
+		this.absY = (this.relY / this._gv.fieldSize) - this._gv.displayY;
+
 		this.color = color;
 
 		this.draw(this.relX, this.relY);
 	}
 
-	draw(posX: number, posY: number) {
+	draw(relX: number, relY: number) {
 		this._gv.ctx.fillStyle = this.color;
 		this._gv.ctx.fillRect(
-			posX,
-			posY,
+			relX,
+			relY,
 			this._gv.fieldSize,
 			this._gv.fieldSize,
 		)
