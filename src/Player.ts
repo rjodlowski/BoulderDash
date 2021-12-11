@@ -138,6 +138,10 @@ export default class Player {
 				if (this.relY > upperBorderPx || this._gv.displayY == minDisplayY && distanceFromTop <= upperBorderPx) {
 					if (this.canMove(direction)) {
 						this.relY -= this._gv.fieldSize;
+						this._gv.currLevel[this.absY][this.absX] = 0;
+						this._gv.currLevel[this.absY - 1][this.absX] = 9;
+						this.absY--
+						this._gv.playerY = this.absY;
 					}
 				} else {
 					console.log("Shift border top");
@@ -153,6 +157,10 @@ export default class Player {
 				if (this.relY < lowerBorderPx || this._gv.displayY == maxDisplayY && distanceFromBottom >= lowerBorderPx) {
 					if (this.canMove(direction)) {
 						this.relY += this._gv.fieldSize;
+						this._gv.currLevel[this.absY][this.absX] = 0;
+						this._gv.currLevel[this.absY + 1][this.absX] = 9;
+						this.absY++
+						this._gv.playerY = this.absY;
 					}
 				} else {
 					console.log("Shift border bottom");
@@ -168,6 +176,10 @@ export default class Player {
 				if (this.relX > leftBorderPx || this._gv.displayX == minDisplayX && distanceFromLeft <= leftBorderPx) {
 					if (this.canMove(direction)) {
 						this.relX -= this._gv.fieldSize;
+						this._gv.currLevel[this.absY][this.absX] = 0;
+						this._gv.currLevel[this.absY][this.absX - 1] = 9;
+						this.absX--
+						this._gv.playerX = this.absX;
 					}
 				} else {
 					console.log("Shift border left");
@@ -183,6 +195,10 @@ export default class Player {
 				if (this.relX < rightBorderPx || this._gv.displayX == maxDisplayX && distanceFromRight >= rightBorderPx) {
 					if (this.canMove(direction)) {
 						this.relX += this._gv.fieldSize;
+						this._gv.currLevel[this.absY][this.absX] = 0;
+						this._gv.currLevel[this.absY][this.absX + 1] = 9;
+						this.absX++
+						this._gv.playerX = this.absX;
 					}
 				} else {
 					console.log("Shift border right");

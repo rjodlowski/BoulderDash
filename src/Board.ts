@@ -214,8 +214,8 @@ export default class Board {
 
 					case 9: // Player
 						// console.log(`Creating player: x:${x}, y:${y}`);
-						this._gv.playerStartX = x;
-						this._gv.playerStartY = y;
+						this._gv.playerX = x;
+						this._gv.playerY = y;
 						break;
 
 					default:

@@ -15,7 +15,7 @@ export default class Boulder {
 
 	playerPassable: boolean = false;
 	entityPassable: boolean = false;
-	// canBeCrushed: boolean = false;
+	falling: boolean = false;
 
 	constructor(gv: GlobalVars, x: number, y: number) {
 		// console.log("Boulder created");
@@ -84,21 +84,24 @@ export default class Boulder {
 				// console.log(foundDynamic);
 				if (foundDynamic.length > 0) {
 					fieldBeneath = foundDynamic[0];
+				} else {
+					if (this.absX == this._gv.playerX && this.absY + 1 == this._gv.playerY) {
+						if (this.falling) {
+							alert("Player crushed!");
+							return true;
+						} else {
+							return false;
+						}
+					}
 				}
 			} else {
 				fieldBeneath = foundStatic[0];
 			}
+			// Examine the field beneath
 			// console.log(fieldBeneath);
 
-			// Examine the field beneath
 			if (fieldBeneath != undefined) {
-				if (fieldBeneath.constructor.name == "Player") {
-					alert("Player crushed!");
-				}
 				return fieldBeneath.entityPassable;
-				// if (fieldBeneath.canBeCrushed) {
-				// 	fieldBeneath.crush()
-				// }
 			}
 		}
 		return true;
@@ -108,19 +111,6 @@ export default class Boulder {
 	 * Movement affected by gravity
 	 */
 	fall() {
-		//#region plan
-		//	not bottom of map
-		//	(check field under)
-		//	an empty field
-		//		can fall
-		//	anonther object
-		//		if entity-traversable
-		// 			can fall
-		// 			check if crushes sth (crawler, player, butterfly)
-
-		// on fall update relative and absolute positions (move in a whole level)
-		//#endregion
-
 		setInterval(() => {
 			if (this.canFall()) {
 				// Fall relatively
@@ -129,6 +119,7 @@ export default class Boulder {
 				this._gv.currLevel[this.absY][this.absX] = 0
 				this._gv.currLevel[this.absY + 1][this.absX] = 4;
 				this.absY++;
+				this.falling = true;
 			} else {
 				this.rollDown();
 			}
@@ -237,7 +228,7 @@ export default class Boulder {
 	rollDown() {
 		let directions = this.canRollDown();
 
-		if (directions.length > 0) {
+		if (directions.length > 0 && this.falling) {
 			console.log("Rolling down", directions[0]);
 			switch (directions[0]) {
 				case "left":
@@ -259,6 +250,8 @@ export default class Boulder {
 
 					break;
 			}
+		} else {
+			this.falling = false;
 		}
 	}
 

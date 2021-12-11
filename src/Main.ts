@@ -12,7 +12,7 @@ export default class Main {
 	constructor() {
 		this._gv = new GlobalVars();
 		this._board = new Board(this._gv);
-		this._player = new Player(this._gv, this._gv.playerStartX, this._gv.playerStartY);
+		this._player = new Player(this._gv, this._gv.playerX, this._gv.playerY);
 		this._keyboard = new Keyboard(this._gv, this._player);
 
 		this.animate();
