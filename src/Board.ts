@@ -159,6 +159,10 @@ export default class Board {
 		}
 	}
 
+	/**
+	 * Moves static elements of the gameboard
+	 * @param direction top | bottom | left | right
+	 */
 	public static moveStaticMandatory(gv: GlobalVars, direction: string) {
 		switch (direction) {
 			case "top":
@@ -240,20 +244,24 @@ export default class Board {
 			}
 		}
 		this.enableGravity();
-
-		// console.log("allDynamic: ", this._gv.allDynamic);
 	}
 
+	/**
+	 * Switches gravity on for each boulder
+	 */
 	enableGravity() {
-		// setInterval(() => {
-		console.log("gravity")
-		let boulders = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
-		for (let i = 0; i < boulders.length; i++) {
-			boulders[i].fall();
+		let boulders: Boulder[] = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
+		for (let boulder of boulders) {
+			boulder.fall();
 		}
-		// }, 1000)
 	}
 
+	/**
+	 * Removes a static element from the game 
+	 * @param index of the static element
+	 * @param x relative of removed element
+	 * @param y relative of removed element
+	 */
 	public static removeEl(gv: GlobalVars, index: number, x: number, y: number) {
 		// Remove from allElements
 		gv.allElements.splice(index, 1);
@@ -263,14 +271,9 @@ export default class Board {
 	}
 
 	update() {
-
 		// update all static elements on the board
-
 		if (Board.playerMoved) {
-			// Player.checkIfWalkedOnSth(this._gv, );
 			this.getPartOfScene();
-			// this._gv.allElements = []
-			// this.displayScene();
 			Board.playerMoved = false;
 		}
 

@@ -11,7 +11,7 @@ export default class GlobalVars {
 
 	runRender: boolean = true; // Determines if the main board render function should be ran
 
-	currLevelNumber: number = 1; // Mumber of the current level
+	currLevelNumber: number = 0; // Mumber of the current level
 	currLevel: number[][] = [[]]; // Current level
 	levelWidth: number; // Width of a level in fields
 	levelHeight: number;
@@ -31,6 +31,7 @@ export default class GlobalVars {
 	innerBorder: number = 3; // fields limiting the inner area of player movement
 	playerX: number;
 	playerY: number;
+	playerAlive: boolean = true;
 
 	scenePart: number[][] = [[]]
 	// All static elements on the board

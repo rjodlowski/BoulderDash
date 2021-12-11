@@ -1,4 +1,5 @@
 import Board from "./Board";
+import Boulder from "./entities/Boulder";
 import GlobalVars from "./GlobalVars";
 
 export default class Player {
@@ -22,6 +23,8 @@ export default class Player {
 	entityPassable: boolean = true;
 	groundShifted: boolean = false;
 
+	public static alive: boolean = false;
+
 	constructor(gv: GlobalVars, startX: number, startY: number) {
 		this._gv = gv;
 
@@ -44,13 +47,15 @@ export default class Player {
 	 * @param relY
 	 */
 	draw(relX: number, relY: number) {
-		this._gv.ctx.fillStyle = this.color;
-		this._gv.ctx.fillRect(
-			relX,
-			relY,
-			this._gv.fieldSize,
-			this._gv.fieldSize,
-		)
+		if (this._gv.playerAlive) {
+			this._gv.ctx.fillStyle = this.color;
+			this._gv.ctx.fillRect(
+				relX,
+				relY,
+				this._gv.fieldSize,
+				this._gv.fieldSize,
+			)
+		}
 	}
 
 	/**
@@ -235,6 +240,40 @@ export default class Player {
 					break;
 			}
 		}
+	}
+
+	/**
+	 * Handles player death event
+	 * @param reason event, that got the player killed
+	 */
+	public static die(gv: GlobalVars, reason: string) {
+		console.log(`Player died! Reason: ${reason}`);
+		// change gv value
+		gv.playerAlive = false;
+		// change Player type value
+		Player.alive = false;
+		// Stop gravity interval
+		let boulders: Boulder[] = gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
+		for (let boulder of boulders) {
+			clearInterval(boulder.gravityInterval)
+		}
+		// Show end game picture
+		setTimeout(() => {
+
+			gv.ctx.font = "48px serif";
+			gv.ctx.fillStyle = "red";
+			gv.ctx.fillText(`Ded becose: ${reason}`, 100, 100);
+
+			let img = new Image()
+			img.src = "../assets/graphics/death_screen_2.jpg";
+			img.onload = function () {
+				gv.ctx.drawImage(img,
+					(gv.canvasWidth - 544) / 2,
+					(gv.canvas.height - 339) / 2,
+				)
+			}
+		}, 100);
+
 	}
 
 	update() {

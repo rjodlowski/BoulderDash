@@ -1,4 +1,5 @@
 import GlobalVars from "../GlobalVars";
+import Player from "../Player";
 
 export default class Boulder {
 	_gv: GlobalVars;
@@ -12,6 +13,7 @@ export default class Boulder {
 	absY: number // level coord
 
 	color: string = "yellow";
+	gravityInterval: NodeJS.Timer;
 
 	playerPassable: boolean = false;
 	entityPassable: boolean = false;
@@ -61,7 +63,7 @@ export default class Boulder {
 	}
 
 	/**
-	 * Checkd if empty field beneath 
+	 * Checks if empty field beneath 
 	 */
 	canFall(): boolean {
 		// console.log(this);
@@ -87,7 +89,11 @@ export default class Boulder {
 				} else {
 					if (this.absX == this._gv.playerX && this.absY + 1 == this._gv.playerY) {
 						if (this.falling) {
-							alert("Player crushed!");
+							// alert("Player ssscrushed!");
+							Player.die(this._gv, "crushed");
+							// setTimeout(() => {
+							// 	this._gv.playerAlive = false;
+							// }, 1000);
 							return true;
 						} else {
 							return false;
@@ -111,7 +117,7 @@ export default class Boulder {
 	 * Movement affected by gravity
 	 */
 	fall() {
-		setInterval(() => {
+		this.gravityInterval = setInterval(() => {
 			if (this.canFall()) {
 				// Fall relatively
 				this.relY += this._gv.fieldSize;

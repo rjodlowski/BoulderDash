@@ -20,13 +20,14 @@ export default class Main {
 
 	animate() {
 		if (this._gv.runRender) {
-
 			this._gv.ctx.clearRect(0, 0, this._gv.canvas.width, this._gv.canvas.height)
+			if (this._gv.playerAlive) {
 
-			this._board.update();
-			this._player.update();
+				this._board.update();
+				this._player.update();
 
-			requestAnimationFrame(this.animate.bind(this));
+				requestAnimationFrame(this.animate.bind(this));
+			}
 		}
 	}
 }
