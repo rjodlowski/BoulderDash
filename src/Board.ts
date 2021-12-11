@@ -64,7 +64,7 @@ export default class Board {
 	 * Gets the part of the scene to display
 	 */
 	getPartOfScene() {
-		let partOfScene: number[][] = new Array(this._gv.fieldsPerHeight).fill(0).map(() => new Array(this._gv.fieldsPerWidth).fill("JD"));
+		let partOfScene: number[][] = new Array(this._gv.fieldsPerHeight).fill(0).map(() => new Array(this._gv.fieldsPerWidth).fill("XD"));
 
 		for (let y = 0; y < this._gv.fieldsPerHeight; y++) {
 			for (let x = 0; x < this._gv.fieldsPerWidth; x++) {
@@ -89,7 +89,7 @@ export default class Board {
 		this._gv.displayX == 0 ? this.displaysWalls.left = true : this.displaysWalls.left = false;
 		this._gv.displayX + this._gv.fieldsPerWidth >= this._gv.currLevel[0].length - 1 ? this.displaysWalls.right = true : this.displaysWalls.right = false;
 		// console.log(this.displaysWalls);
-		this.displayScene();
+		// this.displayScene();
 	}
 
 	/** 
@@ -103,6 +103,7 @@ export default class Board {
 				if (gv.displayY > 0) {
 					gv.displayY--;
 					Board.moveDynamicMandatory(gv, "top");
+					Board.moveStaticMandatory(gv, "top")
 				} else {
 					console.log("Can't move up", gv.displayY);
 				}
@@ -112,6 +113,8 @@ export default class Board {
 				if (gv.displayY + gv.fieldsPerHeight <= gv.levelHeight - 1) {
 					gv.displayY++;
 					Board.moveDynamicMandatory(gv, "bottom");
+					Board.moveStaticMandatory(gv, "bottom")
+
 				} else {
 					console.log("Can't move down", gv.displayY);
 				}
@@ -121,6 +124,8 @@ export default class Board {
 				if (gv.displayX > 0) {
 					gv.displayX--;
 					Board.moveDynamicMandatory(gv, "left");
+					Board.moveStaticMandatory(gv, "left")
+
 				} else {
 					console.log("Can't move left", gv.displayX);
 				}
@@ -130,6 +135,8 @@ export default class Board {
 				if (gv.displayX + gv.fieldsPerWidth <= gv.levelWidth - 1) {
 					gv.displayX++;
 					Board.moveDynamicMandatory(gv, "right");
+					Board.moveStaticMandatory(gv, "right")
+
 				} else {
 					console.log("Can't move right", gv.displayX);
 				}
@@ -153,15 +160,43 @@ export default class Board {
 		}
 	}
 
+	public static moveStaticMandatory(gv: GlobalVars, direction: string) {
+		switch (direction) {
+			case "top":
+				for (let i = 0; i < gv.allElements.length; i++) {
+					gv.allElements[i].relY += gv.fieldSize;
+				}
+				break;
+			case "bottom":
+				for (let i = 0; i < gv.allElements.length; i++) {
+					gv.allElements[i].relY -= gv.fieldSize;
+				}
+				break;
+			case "left":
+				for (let i = 0; i < gv.allElements.length; i++) {
+					gv.allElements[i].relX += gv.fieldSize;
+				}
+				break;
+			case "right":
+				for (let i = 0; i < gv.allElements.length; i++) {
+					gv.allElements[i].relX -= gv.fieldSize;
+				}
+				break;
+
+		}
+	}
+
 
 	/**
 	 * Displays a part of the scene; Renders items represented by numbers in a level
 	 */
 	displayScene() {
 		// Save a part of the scene to the variable
-		for (let y: number = 0; y < this._gv.scenePart.length; y++) {
-			for (let x: number = 0; x < this._gv.scenePart[0].length; x++) {
-				let entityNumber: number = this._gv.scenePart[y][x];
+		// for (let y: number = 0; y < this._gv.scenePart.length; y++) {
+		// 	for (let x: number = 0; x < this._gv.scenePart[0].length; x++) {
+		for (let y: number = 0; y < this._gv.currLevel.length; y++) {
+			for (let x: number = 0; x < this._gv.currLevel[0].length; x++) {
+				let entityNumber: number = this._gv.currLevel[y][x];
 				switch (entityNumber) {
 					case 0: // Empty field
 						break;
@@ -219,13 +254,13 @@ export default class Board {
 	}
 
 	enableGravity() {
-		// setInterval(() => {
-		console.log("gravity")
-		let boulders = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
-		for (let i = 0; i < boulders.length; i++) {
-			boulders[i].fall();
-		}
-		// }, 1000)
+		setInterval(() => {
+			console.log("gravity")
+			let boulders = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
+			for (let i = 0; i < boulders.length; i++) {
+				boulders[i].fall();
+			}
+		}, 1000)
 	}
 
 	public static removeEl(gv: GlobalVars, index: number, x: number, y: number) {
@@ -243,8 +278,8 @@ export default class Board {
 		if (Board.playerMoved) {
 			// Player.checkIfWalkedOnSth(this._gv, );
 			this.getPartOfScene();
-			this._gv.allElements = []
-			this.displayScene();
+			// this._gv.allElements = []
+			// this.displayScene();
 			Board.playerMoved = false;
 		}
 

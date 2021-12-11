@@ -58,31 +58,31 @@ export default class Boulder {
 	}
 
 	canFall(): boolean {
-		console.log(this);
+		// console.log(this);
 
 		if (this.absY < this._gv.levelHeight - 1) {
 			let fieldBeneath;
 
-			console.log(this._gv.allElements);
+			// console.log(this._gv.allElements);
 
 			// Find an object of a field beneath in static and dynamic table
 			let foundStatic = this._gv.allElements.filter((el) => {
 				return el.relX == this.relX && el.relY == this.relY + this._gv.fieldSize
 			})
-			console.log(foundStatic);
+			// console.log(foundStatic);
 
 			if (foundStatic.length == 0) {
 				let foundDynamic = this._gv.allDynamic.filter((el) => {
 					return el.relX == this.relX && el.relY == this.relY + this._gv.fieldSize;
 				})
-				console.log(foundDynamic);
+				// console.log(foundDynamic);
 				if (foundDynamic.length > 0) {
 					fieldBeneath = foundDynamic[0];
 				}
 			} else {
 				fieldBeneath = foundStatic[0];
 			}
-			console.log(fieldBeneath);
+			// console.log(fieldBeneath);
 
 			// Examine the field beneath
 			if (fieldBeneath != undefined) {
@@ -92,7 +92,6 @@ export default class Boulder {
 				// }
 			}
 		}
-
 		return true;
 	}
 
@@ -100,7 +99,25 @@ export default class Boulder {
 	 * Movement affected by gravity
 	 */
 	fall() {
-		console.log(this.canFall());
+		//#region plan
+		//	not bottom of map
+		//	(check field under)
+		//	an empty field
+		//		can fall
+		//	anonther object
+		//		if entity-traversable
+		// 			can fall
+		// 			check if crushes sth (crawler, player, butterfly)
+
+		// on fall update relative and absolute positions (move in a whole level)
+		//#endregion
+
+		// console.log(this.canFall());
+
+		// Nie znajduje ich, bo nie ma ich obiektów w klasie
+		// bo dodawane są tylko te, co znajdują się na ekranie
+		// Zmienić na generację wszystkich za pierwszym razem
+		// i wyświetlanie tylko tych, które znajdują się w obszarze view
 
 		if (this.canFall()) {
 			// Fall relatively
