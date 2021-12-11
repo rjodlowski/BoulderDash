@@ -29,6 +29,8 @@ export default class GlobalVars {
 
 	// Player variables
 	innerBorder: number = 3; // fields limiting the inner area of player movement
+	playerStartX: number;
+	playerStartY: number;
 
 	scenePart: number[][] = [[]]
 	// All static elements on the board

@@ -11,21 +11,20 @@ export default class Boulder {
 	absX: number // level coord
 	absY: number // level coord
 
-	deleted: boolean;
+	color: string = "yellow";
 
 	playerPassable: boolean = false;
 	entityPassable: boolean = false;
 	// canBeCrushed: boolean = false;
-	color: string = "yellow";
 
 	constructor(gv: GlobalVars, x: number, y: number) {
-		console.log("Boulder created");
+		// console.log("Boulder created");
 		this._gv = gv;
 
-		this.relX = x;
-		this.relY = y;
-		this.absX = (this.relX / this._gv.fieldSize) - this._gv.displayX;
-		this.absY = (this.relY / this._gv.fieldSize) - this._gv.displayY;
+		this.absX = x;
+		this.absY = y;
+		this.relX = this.absX * this._gv.fieldSize;
+		this.relY = this.absY * this._gv.fieldSize;
 	}
 
 	draw(posX: number, posY: number) {
@@ -61,6 +60,9 @@ export default class Boulder {
 		}
 	}
 
+	/**
+	 * Checkd if empty field beneath 
+	 */
 	canFall(): boolean {
 		// console.log(this);
 
@@ -90,6 +92,9 @@ export default class Boulder {
 
 			// Examine the field beneath
 			if (fieldBeneath != undefined) {
+				if (fieldBeneath.constructor.name == "Player") {
+					alert("Player crushed!");
+				}
 				return fieldBeneath.entityPassable;
 				// if (fieldBeneath.canBeCrushed) {
 				// 	fieldBeneath.crush()
@@ -222,7 +227,6 @@ export default class Boulder {
 					}
 				}
 			}
-
 		}
 		return directions;
 	}

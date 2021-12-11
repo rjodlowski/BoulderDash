@@ -181,18 +181,13 @@ export default class Board {
 					gv.allElements[i].relX -= gv.fieldSize;
 				}
 				break;
-
 		}
 	}
-
 
 	/**
 	 * Displays a part of the scene; Renders items represented by numbers in a level
 	 */
 	displayScene() {
-		// Save a part of the scene to the variable
-		// for (let y: number = 0; y < this._gv.scenePart.length; y++) {
-		// 	for (let x: number = 0; x < this._gv.scenePart[0].length; x++) {
 		for (let y: number = 0; y < this._gv.currLevel.length; y++) {
 			for (let x: number = 0; x < this._gv.currLevel[0].length; x++) {
 				let entityNumber: number = this._gv.currLevel[y][x];
@@ -200,30 +195,27 @@ export default class Board {
 					case 0: // Empty field
 						break;
 					case 1: // Border wall
-						this._gv.allElements.push(new BorderWall(
-							this._gv,
-							"black",
-							x * this._gv.fieldSize,
-							y * this._gv.fieldSize,
-						));
+						this._gv.allElements.push(
+							new BorderWall(this._gv, x, y)
+						);
 						break;
 					case 2: // Inner wall
-						this._gv.allElements.push(new InnerWall(
-							this._gv,
-							"gray",
-							x * this._gv.fieldSize,
-							y * this._gv.fieldSize,
-						));
+						this._gv.allElements.push(
+							new InnerWall(this._gv, x, y)
+						);
 						break;
 					case 3: // 
-						this._gv.allElements.push(new Dirt(
-							this._gv,
-							"brown",
-							x * this._gv.fieldSize,
-							y * this._gv.fieldSize,
-						));
+						this._gv.allElements.push(
+							new Dirt(this._gv, x, y)
+						);
 						break;
 					case 4: // Boulder - not created over and over again
+						break;
+
+					case 9: // Player
+						// console.log(`Creating player: x:${x}, y:${y}`);
+						this._gv.playerStartX = x;
+						this._gv.playerStartY = y;
 						break;
 
 					default:
@@ -241,11 +233,9 @@ export default class Board {
 		for (let y: number = 0; y < this._gv.levelHeight; y++) {
 			for (let x: number = 0; x < this._gv.levelWidth; x++) {
 				if (this._gv.currLevel[y][x] == 4) {
-					this._gv.allDynamic.push(new Boulder(
-						this._gv,
-						x * this._gv.fieldSize,
-						y * this._gv.fieldSize
-					))
+					this._gv.allDynamic.push(
+						new Boulder(this._gv, x, y,)
+					)
 				}
 			}
 		}

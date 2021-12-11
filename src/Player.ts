@@ -7,7 +7,6 @@ export default class Player {
 	// Player model
 	width: number;
 	height: number;
-	color: string;
 
 	// Relative positions -> [px]
 	relX: number;
@@ -17,23 +16,24 @@ export default class Player {
 	absX: number;
 	absY: number;
 
+	color: string = "red";
+
 	playerPassable: boolean = true;
 	entityPassable: boolean = true;
+	groundShifted: boolean = false;
 
-	groundShifted: boolean;
-
-	constructor(gv: GlobalVars, color: string, startX: number, startY: number) {
+	constructor(gv: GlobalVars, startX: number, startY: number) {
 		this._gv = gv;
 
 		// Player model dimensions
 		this.width = this._gv.fieldSize;
 		this.height = this._gv.fieldSize;
-		this.color = color;
 
-		this.relX = startX;
-		this.relY = startY;
+		this.absX = startX;
+		this.absY = startY;
 
-		this.groundShifted = false;
+		this.relX = this.absX * this._gv.fieldSize;
+		this.relY = this.absY * this._gv.fieldSize;
 
 		this.draw(this.relX, this.relY);
 	}

@@ -11,20 +11,19 @@ export default class InnerWall {
 	absX: number // level coord
 	absY: number // level coord
 
-
-	color: string;
+	color: string = "gray";
 
 	playerPassable: boolean = false;
 	entityPassable: boolean = false;
 
-	constructor(gv: GlobalVars, color: string, x: number, y: number,) {
+	constructor(gv: GlobalVars, x: number, y: number,) {
 		this._gv = gv;
-		this.relX = x;
-		this.relY = y;
-		this.absX = (this.relX / this._gv.fieldSize) - this._gv.displayX;
-		this.absY = (this.relY / this._gv.fieldSize) - this._gv.displayY;
 
-		this.color = color;
+		this.absX = x;
+		this.absY = y;
+
+		this.relX = this.absX * this._gv.fieldSize;
+		this.relY = this.absY * this._gv.fieldSize;
 
 		this.draw(this.relX, this.relY);
 	}
