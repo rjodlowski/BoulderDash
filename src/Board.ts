@@ -4,6 +4,7 @@ import Dirt from "./entities/Dirt";
 import InnerWall from "./entities/InnerWall";
 import GlobalVars from "./GlobalVars";
 import levels from "./levels/Levels";
+import Player from "./Player";
 
 export default class Board {
 	_gv: GlobalVars;
@@ -103,6 +104,8 @@ export default class Board {
 					gv.displayY--;
 					Board.moveDynamicMandatory(gv, "top");
 					Board.moveStaticMandatory(gv, "top")
+					Player.movePlayerWithBoard(gv, "top");
+
 				} else {
 					console.log("Can't move up", gv.displayY);
 				}
@@ -113,6 +116,7 @@ export default class Board {
 					gv.displayY++;
 					Board.moveDynamicMandatory(gv, "bottom");
 					Board.moveStaticMandatory(gv, "bottom")
+					Player.movePlayerWithBoard(gv, "bottom");
 
 				} else {
 					console.log("Can't move down", gv.displayY);
@@ -124,6 +128,7 @@ export default class Board {
 					gv.displayX--;
 					Board.moveDynamicMandatory(gv, "left");
 					Board.moveStaticMandatory(gv, "left")
+					Player.movePlayerWithBoard(gv, "left");
 
 				} else {
 					console.log("Can't move left", gv.displayX);
@@ -135,6 +140,7 @@ export default class Board {
 					gv.displayX++;
 					Board.moveDynamicMandatory(gv, "right");
 					Board.moveStaticMandatory(gv, "right")
+					Player.movePlayerWithBoard(gv, "right");
 
 				} else {
 					console.log("Can't move right", gv.displayX);

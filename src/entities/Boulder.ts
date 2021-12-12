@@ -129,7 +129,7 @@ export default class Boulder {
 			} else {
 				this.rollDown();
 			}
-		}, 1000 + Math.random() * 200)
+		}, this._gv.gravityIntervalTime + Math.random() * this._gv.gravityIntervalTime / 5)
 	}
 
 	/**
@@ -139,6 +139,7 @@ export default class Boulder {
 	canRollDown(): string[] {
 		// console.log(this);
 		// can roll if a boulder beneath
+		//TODO change checking for free space to: if gv.currLevel[y][x] == 0 -> is empty 
 
 		let directions: string[] = []
 		let foundDynamic = this._gv.allDynamic.filter((el) => {
@@ -258,6 +259,33 @@ export default class Boulder {
 			}
 		} else {
 			this.falling = false;
+		}
+	}
+
+	/**
+	 * Boulder pushed by a player
+	 * @param side left | right
+	 */
+	moveByPlayer(side: string) {
+		switch (side) {
+			case "left":
+				if (this._gv.currLevel[this.absY][this.absX - 1] == 0) {
+					this._gv.currLevel[this.absY][this.absX] = 0;
+					this._gv.currLevel[this.absY][this.absX - 1] = 4;
+
+					this.absX--;
+					this.relX -= this._gv.fieldSize;
+				}
+				break;
+			case "right":
+				if (this._gv.currLevel[this.absY][this.absX + 1] == 0) {
+					this._gv.currLevel[this.absY][this.absX] = 0;
+					this._gv.currLevel[this.absY][this.absX + 1] = 4;
+
+					this.absX++;
+					this.relX += this._gv.fieldSize;
+				}
+				break;
 		}
 	}
 

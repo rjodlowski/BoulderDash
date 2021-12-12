@@ -132,6 +132,10 @@ export default class Player {
 	 * @param direction up | down | left | right 
 	 */
 	move(direction: string) {
+		// Update player's position if it was moved alongside the board
+		this.absX = this._gv.playerX;
+		this.absY = this._gv.playerY;
+
 		Board.playerMoved = true;
 
 		switch (direction) {
@@ -178,6 +182,8 @@ export default class Player {
 				let minDisplayX = 0;
 				let distanceFromLeft = this.relX;
 
+				this.checkIfMovesBoulder(direction);
+
 				if (this.relX > leftBorderPx || this._gv.displayX == minDisplayX && distanceFromLeft <= leftBorderPx) {
 					if (this.canMove(direction)) {
 						this.relX -= this._gv.fieldSize;
@@ -191,11 +197,14 @@ export default class Player {
 					Board.movePartOfScene(this._gv, "left")
 					this.groundShifted = true;
 				}
+
 				break;
 			case 'right':
 				let rightBorderPx = this._gv.canvasWidth - ((this._gv.innerBorder + 1) * this._gv.fieldSize)
 				let distanceFromRight = this._gv.canvasWidth - (this._gv.canvasWidth - this.relX);
 				let maxDisplayX = this._gv.levelWidth - this._gv.fieldsPerWidth;
+
+				this.checkIfMovesBoulder(direction)
 
 				if (this.relX < rightBorderPx || this._gv.displayX == maxDisplayX && distanceFromRight >= rightBorderPx) {
 					if (this.canMove(direction)) {
@@ -214,10 +223,41 @@ export default class Player {
 			default:
 				console.log("Unknown direction");
 		}
-
 		this.checkIfWalkedOnSth();
 	}
 
+	/**
+	 * Updates player's position in the current level when the board moves
+	 * @param direction top | bottom | left | right
+	 */
+	public static movePlayerWithBoard(gv: GlobalVars, direction: string) {
+		switch (direction) {
+			case "top":
+				gv.currLevel[gv.playerY][gv.playerX] = 0;
+				gv.currLevel[gv.playerY - 1][gv.playerX] = 9;
+				gv.playerY--;
+				break;
+			case "bottom":
+				gv.currLevel[gv.playerY][gv.playerX] = 0;
+				gv.currLevel[gv.playerY + 1][gv.playerX] = 9;
+				gv.playerY++;
+				break;
+			case "left":
+				gv.currLevel[gv.playerY][gv.playerX] = 0;
+				gv.currLevel[gv.playerY][gv.playerX - 1] = 9;
+				gv.playerX--;
+				break;
+			case "right":
+				gv.currLevel[gv.playerY][gv.playerX] = 0;
+				gv.currLevel[gv.playerY][gv.playerX + 1] = 9;
+				gv.playerX++;
+				break;
+		}
+	}
+
+	/**
+	 * Checks if player walked on sth (e.g. diamond, dirt)
+	 */
 	checkIfWalkedOnSth() {
 		let found = this._gv.allElements.filter((el) => { return el.relX == this.relX && el.relY == this.relY })
 		// console.log(found, this._gv.allElements, this.posX, this.posY);
@@ -239,6 +279,40 @@ export default class Player {
 					console.log(`Deleting: ${name} - no case`);
 					break;
 			}
+		}
+	}
+
+	/**
+	 * Moves the boulder if it's able to 
+	 * @param side left | right
+	 */
+	checkIfMovesBoulder(side: string) {
+		console.log("checkIfMovesBoulder: ", side);
+
+		switch (side) {
+			case "left":
+				let boulderLeft = this._gv.allDynamic.filter((el) => {
+					return el.absY == this.absY &&
+						el.absX == this.absX - 1 &&
+						el.constructor.name == "Boulder"
+				})
+				if (boulderLeft.length > 0) {
+					console.log("Boulder moved:", side);
+					boulderLeft[0].moveByPlayer(side)
+				}
+				break;
+
+			case "right":
+				let boulderRight = this._gv.allDynamic.filter((el) => {
+					return el.absY == this.absY &&
+						el.absX == this.absX + 1 &&
+						el.constructor.name == "Boulder"
+				})
+				if (boulderRight.length > 0) {
+					console.log("Boulder moved:", side);
+					boulderRight[0].moveByPlayer(side)
+				}
+				break;
 		}
 	}
 
@@ -285,5 +359,4 @@ export default class Player {
 			this.groundShifted = false;
 		}
 	}
-
 }

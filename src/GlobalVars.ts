@@ -15,6 +15,7 @@ export default class GlobalVars {
 	currLevel: number[][] = [[]]; // Current level
 	levelWidth: number; // Width of a level in fields
 	levelHeight: number;
+	gravityIntervalTime: number = 1000;
 
 	// Canvas variables
 	fieldSize: number = 40; // [px] - Fields are squares, so both sides are even
