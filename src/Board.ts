@@ -1,5 +1,6 @@
 import BorderWall from "./entities/BorderWall";
 import Boulder from "./entities/Boulder";
+import Diamond from "./entities/Diamond";
 import Dirt from "./entities/Dirt";
 import InnerWall from "./entities/InnerWall";
 import GlobalVars from "./GlobalVars";
@@ -219,7 +220,9 @@ export default class Board {
 							new Dirt(this._gv, x, y)
 						);
 						break;
-					case 4: // Boulder - not created over and over again
+					case 4: // Boulder 
+						break;
+					case 5: // Diamond 
 						break;
 
 					case 9: // Player
@@ -244,7 +247,11 @@ export default class Board {
 			for (let x: number = 0; x < this._gv.levelWidth; x++) {
 				if (this._gv.currLevel[y][x] == 4) {
 					this._gv.allDynamic.push(
-						new Boulder(this._gv, x, y,)
+						new Boulder(this._gv, x, y)
+					)
+				} else if (this._gv.currLevel[y][x] == 5) {
+					this._gv.allDynamic.push(
+						new Diamond(this._gv, x, y)
 					)
 				}
 			}
@@ -253,12 +260,17 @@ export default class Board {
 	}
 
 	/**
-	 * Switches gravity on for each boulder
+	 * Switches gravity on for each boulder and diamond
 	 */
 	enableGravity() {
 		let boulders: Boulder[] = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
 		for (let boulder of boulders) {
 			boulder.fall();
+		}
+
+		let diamonds: Diamond[] = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Diamond" })
+		for (let diamond of diamonds) {
+			diamond.fall();
 		}
 	}
 

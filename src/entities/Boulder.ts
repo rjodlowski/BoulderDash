@@ -66,34 +66,29 @@ export default class Boulder {
 	 * Checks if empty field beneath 
 	 */
 	canFall(): boolean {
-		// console.log(this);
-
 		if (this.absY < this._gv.levelHeight - 1) {
 			let fieldBeneath;
-
-			// console.log(this._gv.allElements);
 
 			// Find an object of a field beneath in static and dynamic table
 			let foundStatic = this._gv.allElements.filter((el) => {
 				return el.absX == this.absX && el.absY == this.absY + 1
 			})
-			// console.log(foundStatic);
 
 			if (foundStatic.length == 0) {
 				let foundDynamic = this._gv.allDynamic.filter((el) => {
 					return el.absX == this.absX && el.absY == this.absY + 1;
 				})
-				// console.log(foundDynamic);
+
 				if (foundDynamic.length > 0) {
 					fieldBeneath = foundDynamic[0];
 				} else {
 					if (this.absX == this._gv.playerX && this.absY + 1 == this._gv.playerY) {
 						if (this.falling) {
-							// alert("Player ssscrushed!");
-							Player.die(this._gv, "crushed");
-							// setTimeout(() => {
-							// 	this._gv.playerAlive = false;
-							// }, 1000);
+							if (this.constructor.name == "Diamond") {
+								Player.collectDiamond(this._gv, this)
+							} else {
+								Player.die(this._gv, "crushed");
+							}
 							return true;
 						} else {
 							return false;
@@ -103,8 +98,6 @@ export default class Boulder {
 			} else {
 				fieldBeneath = foundStatic[0];
 			}
-			// Examine the field beneath
-			// console.log(fieldBeneath);
 
 			if (fieldBeneath != undefined) {
 				return fieldBeneath.entityPassable;
@@ -137,89 +130,29 @@ export default class Boulder {
 	 * @returns table of directions: left | right
 	 */
 	canRollDown(): string[] {
-		// console.log(this);
-		// can roll if a boulder beneath
-		//TODO change checking for free space to: if gv.currLevel[y][x] == 0 -> is empty 
-
 		let directions: string[] = []
-		let foundDynamic = this._gv.allDynamic.filter((el) => {
+
+		let objectBeneath = this._gv.allDynamic.filter((el) => {
 			return el.absX == this.absX &&
 				el.absY == this.absY + 1 &&
-				el.constructor.name == "Boulder"
+				(
+					el.constructor.name == "Boulder" ||
+					el.constructor.name == "Diamond"
+				)
 		})
-		// console.log(foundDynamic);
-		if (foundDynamic.length > 0) {
 
+		if (objectBeneath.length > 0) {
 			if (this.absY < this._gv.levelHeight - 1) {
 				// Try to fall left
-				// get the field on the left of the boulder
-
-				// Search the static table
-				let foundLeft = this._gv.allElements.filter((el) => {
-					return el.absX == this.absX - 1 && el.absY == this.absY
-				})
-
-				if (foundLeft.length == 0) {
-					foundLeft = this._gv.allDynamic.filter((el) => {
-						return el.absX == this.absX - 1 &&
-							el.absY == this.absY &&
-							el.constructor.name == "Boulder"
-					})
-				}
-				// console.log("foundLeft: ", foundLeft);
-
-				if (foundLeft.length == 0) {
-					// No element found, can be moved left
-					let foundLeftBelow = this._gv.allElements.filter((el) => {
-						return el.absX == this.absX - 1 &&
-							el.absY == this.absY + 1;
-					})
-					if (foundLeftBelow.length == 0) {
-						foundLeftBelow = this._gv.allDynamic.filter((el) => {
-							return el.absX == this.absX - 1 &&
-								el.absY == this.absY + 1 &&
-								el.constructor.name == "Boulder"
-						})
-					}
-					// console.log("found left below", foundLeftBelow);
-
-					if (foundLeftBelow.length == 0 || foundLeftBelow[0].entityPassable) {
-						// can fall -> will be pushed left
+				if (this._gv.currLevel[this.absY][this.absX - 1] == 0) {
+					if (this._gv.currLevel[this.absY + 1][this.absX - 1] == 0) {
 						directions.push("left");
 					}
 				}
-				// if empty, get the one below
-				// Try to fall right
-				if (directions.length == 0) { // Can't fall left, check right
-					let foundRight = this._gv.allElements.filter((el) => {
-						return el.absX == this.absX + 1 && el.absY == this.absY
-					})
-					if (foundRight.length == 0) {
-						foundRight = this._gv.allDynamic.filter((el) => {
-							return el.absX == this.absX + 1 &&
-								el.absY == this.absY &&
-								el.constructor.name == "Boulder"
-						})
-					}
-					// console.log("found right: ", foundRight);
-
-					if (foundRight.length == 0) {
-						// No element found, can be moved right
-						let foundRightBelow = this._gv.allElements.filter((el) => {
-							return el.absX == this.absX + 1 &&
-								el.absY == this.absY + 1;
-						})
-						if (foundRightBelow.length == 0) {
-							foundRightBelow = this._gv.allDynamic.filter((el) => {
-								return el.absX == this.absX + 1 &&
-									el.absY == this.absY + 1 &&
-									el.constructor.name == "Boulder"
-							})
-						}
-						// console.log("found right below: ", foundRightBelow);
-
-						if (foundRightBelow.length == 0 || foundRightBelow[0].entityPassable) {
-							// can fall -> will be pushed right
+				// Can't fall left, check right
+				if (directions.length == 0) {
+					if (this._gv.currLevel[this.absY][this.absX + 1] === 0) {
+						if (this._gv.currLevel[this.absY + 1][this.absX + 1] === 0) {
 							directions.push("right");
 						}
 					}
@@ -267,26 +200,36 @@ export default class Boulder {
 	 * @param side left | right
 	 */
 	moveByPlayer(side: string) {
-		switch (side) {
-			case "left":
-				if (this._gv.currLevel[this.absY][this.absX - 1] == 0) {
-					this._gv.currLevel[this.absY][this.absX] = 0;
-					this._gv.currLevel[this.absY][this.absX - 1] = 4;
+		// TODO can be moved to the side just once
+		if (!this.falling) {
+			switch (side) {
+				case "left":
+					if (this._gv.currLevel[this.absY][this.absX - 1] == 0) {
+						this._gv.currLevel[this.absY][this.absX] = 0;
+						this._gv.currLevel[this.absY][this.absX - 1] = 4;
 
-					this.absX--;
-					this.relX -= this._gv.fieldSize;
-				}
-				break;
-			case "right":
-				if (this._gv.currLevel[this.absY][this.absX + 1] == 0) {
-					this._gv.currLevel[this.absY][this.absX] = 0;
-					this._gv.currLevel[this.absY][this.absX + 1] = 4;
+						this.absX--;
+						this.relX -= this._gv.fieldSize;
+					}
+					break;
+				case "right":
+					if (this._gv.currLevel[this.absY][this.absX + 1] == 0) {
+						this._gv.currLevel[this.absY][this.absX] = 0;
+						this._gv.currLevel[this.absY][this.absX + 1] = 4;
 
-					this.absX++;
-					this.relX += this._gv.fieldSize;
-				}
-				break;
+						this.absX++;
+						this.relX += this._gv.fieldSize;
+					}
+					break;
+			}
 		}
+	}
+
+	/**
+	 * Method for the sake of Typescript, shouldn't ever be called
+	 */
+	collect() {
+		alert("Boulder is not collectable lol");
 	}
 
 	update() {

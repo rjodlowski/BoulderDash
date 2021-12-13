@@ -1,5 +1,6 @@
 import Board from "./Board";
 import Boulder from "./entities/Boulder";
+import Diamond from "./entities/Diamond";
 import GlobalVars from "./GlobalVars";
 
 export default class Player {
@@ -182,7 +183,7 @@ export default class Player {
 				let minDisplayX = 0;
 				let distanceFromLeft = this.relX;
 
-				this.checkIfMovesBoulder(direction);
+				this.checkIfMovesSth(direction);
 
 				if (this.relX > leftBorderPx || this._gv.displayX == minDisplayX && distanceFromLeft <= leftBorderPx) {
 					if (this.canMove(direction)) {
@@ -204,7 +205,7 @@ export default class Player {
 				let distanceFromRight = this._gv.canvasWidth - (this._gv.canvasWidth - this.relX);
 				let maxDisplayX = this._gv.levelWidth - this._gv.fieldsPerWidth;
 
-				this.checkIfMovesBoulder(direction)
+				this.checkIfMovesSth(direction)
 
 				if (this.relX < rightBorderPx || this._gv.displayX == maxDisplayX && distanceFromRight >= rightBorderPx) {
 					if (this.canMove(direction)) {
@@ -263,57 +264,95 @@ export default class Player {
 		// console.log(found, this._gv.allElements, this.posX, this.posY);
 
 		if (found.length > 0) {
-			let name = found[0].constructor.name
-			switch (name) {
-				case "Dirt":
-					let index = this._gv.allElements.indexOf(found[0])
-					Board.removeEl(
-						this._gv,
-						index,
-						found[0].relX / this._gv.fieldSize,
-						found[0].relY / this._gv.fieldSize,
-					)
-					break;
+			let index = this._gv.allElements.indexOf(found[0])
+			Board.removeEl(
+				this._gv,
+				index,
+				found[0].relX / this._gv.fieldSize,
+				found[0].relY / this._gv.fieldSize,
+			)
+		} else {
+			let foundDyn = this._gv.allDynamic.filter((el) => { return el.relX == this.relX && el.relY == this.relY })
+			if (foundDyn.length > 0) {
+				let name = foundDyn[0].constructor.name
+				switch (name) {
+					case "Diamond":
+						Player.collectDiamond(this._gv, foundDyn[0]);
+						break;
 
-				default:
-					console.log(`Deleting: ${name} - no case`);
-					break;
+					default:
+						console.log(`Deleting: ${name} - no case`);
+						break;
+				}
 			}
 		}
 	}
 
 	/**
-	 * Moves the boulder if it's able to 
+	 * Moves a boulder or a diamond if it's able to 
 	 * @param side left | right
 	 */
-	checkIfMovesBoulder(side: string) {
-		console.log("checkIfMovesBoulder: ", side);
+	checkIfMovesSth(side: string) {
+		console.log("checkIfMovesSth: ", side);
 
 		switch (side) {
 			case "left":
-				let boulderLeft = this._gv.allDynamic.filter((el) => {
+				let entityLeft = this._gv.allDynamic.filter((el) => {
 					return el.absY == this.absY &&
 						el.absX == this.absX - 1 &&
-						el.constructor.name == "Boulder"
+						(
+							el.constructor.name == "Boulder" ||
+							el.constructor.name == "Diamond"
+						)
 				})
-				if (boulderLeft.length > 0) {
-					console.log("Boulder moved:", side);
-					boulderLeft[0].moveByPlayer(side)
+				if (entityLeft.length > 0) {
+					let name = entityLeft[0].constructor.name
+					if (name == "Boulder") {
+						console.log("Boulder / diamond moved:", side);
+						entityLeft[0].moveByPlayer(side)
+					} else if (name == "Diamond") {
+						console.log("Walked on a diamond");
+					} else {
+						console.log("Different obj");
+					}
 				}
 				break;
 
 			case "right":
-				let boulderRight = this._gv.allDynamic.filter((el) => {
+				let entityRight = this._gv.allDynamic.filter((el) => {
 					return el.absY == this.absY &&
 						el.absX == this.absX + 1 &&
-						el.constructor.name == "Boulder"
+						(
+							el.constructor.name == "Boulder" ||
+							el.constructor.name == "Diamond"
+						)
 				})
-				if (boulderRight.length > 0) {
-					console.log("Boulder moved:", side);
-					boulderRight[0].moveByPlayer(side)
+				if (entityRight.length > 0) {
+					let name = entityRight[0].constructor.name
+					console.log(name);
+
+					if (name == "Boulder") {
+						console.log("Boulder / diamond moved:", side);
+						entityRight[0].moveByPlayer(side)
+					} else if (name == "Diamond") {
+						console.log("Walked on a diamond");
+					} else {
+						console.log("Different obj");
+					}
 				}
 				break;
 		}
+	}
+
+	/**
+	 * Collects diamond, that was walked on 
+	 * @param diamond to be collected
+	 */
+	public static collectDiamond(gv: GlobalVars, diamond: Boulder | Diamond) {
+		console.log("Player collected a diamond!");
+		diamond.collect();
+
+		//TODO Update point display
 	}
 
 	/**
