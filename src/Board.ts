@@ -1,12 +1,13 @@
-import BorderWall from "./entities/BorderWall";
-import Boulder from "./entities/Boulder";
-import Diamond from "./entities/Diamond";
-import Dirt from "./entities/Dirt";
-import Firefly from "./entities/Firefly";
-import InnerWall from "./entities/InnerWall";
 import GlobalVars from "./GlobalVars";
 import levels from "./levels/Levels";
 import Player from "./Player";
+import BorderWall from "./entities/BorderWall";
+import InnerWall from "./entities/InnerWall";
+import Dirt from "./entities/Dirt";
+import Butterfly from "./entities/Butterfly";
+import Firefly from "./entities/Firefly";
+import Boulder from "./entities/Boulder";
+import Diamond from "./entities/Diamond";
 
 export default class Board {
 	_gv: GlobalVars;
@@ -230,6 +231,8 @@ export default class Board {
 						break;
 					case 6: // Firefly 
 						break;
+					case 7: // Butterfly 
+						break;
 
 					case 9: // Player
 						// console.log(`Creating player: x:${x}, y:${y}`);
@@ -263,10 +266,14 @@ export default class Board {
 					this._gv.allAI.push(
 						new Firefly(this._gv, x, y)
 					)
+				} else if (this._gv.currLevel[y][x] == 7) {
+					this._gv.allAI.push(
+						new Butterfly(this._gv, x, y)
+					)
 				}
 			}
 		}
-		this.enableGravity();
+		// this.enableGravity();
 	}
 
 	/**

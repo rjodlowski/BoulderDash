@@ -154,9 +154,11 @@ export default class Player {
 						this._gv.playerY = this.absY;
 					}
 				} else {
-					console.log("Shift border top");
-					Board.movePartOfScene(this._gv, "top")
-					this.groundShifted = true;
+					if (this.canMove(direction)) {
+						console.log("Shift border top");
+						Board.movePartOfScene(this._gv, "top")
+						this.groundShifted = true;
+					}
 				}
 				break;
 			case 'down':
@@ -173,9 +175,11 @@ export default class Player {
 						this._gv.playerY = this.absY;
 					}
 				} else {
-					console.log("Shift border bottom");
-					Board.movePartOfScene(this._gv, "bottom")
-					this.groundShifted = true;
+					if (this.canMove(direction)) {
+						console.log("Shift border bottom");
+						Board.movePartOfScene(this._gv, "bottom")
+						this.groundShifted = true;
+					}
 				}
 				break;
 			case 'left':
@@ -194,9 +198,11 @@ export default class Player {
 						this._gv.playerX = this.absX;
 					}
 				} else {
-					console.log("Shift border left");
-					Board.movePartOfScene(this._gv, "left")
-					this.groundShifted = true;
+					if (this.canMove(direction)) {
+						console.log("Shift border left");
+						Board.movePartOfScene(this._gv, "left")
+						this.groundShifted = true;
+					}
 				}
 
 				break;
@@ -216,9 +222,11 @@ export default class Player {
 						this._gv.playerX = this.absX;
 					}
 				} else {
-					console.log("Shift border right");
-					Board.movePartOfScene(this._gv, "right")
-					this.groundShifted = true;
+					if (this.canMove(direction)) {
+						console.log("Shift border right");
+						Board.movePartOfScene(this._gv, "right")
+						this.groundShifted = true;
+					}
 				}
 				break;
 			default:

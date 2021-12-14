@@ -1,6 +1,7 @@
 import GlobalVars from "../GlobalVars";
-import Player from "../Player";
 import Dirt from "./Dirt";
+import Diamond from "./Diamond";
+import Player from "../Player";
 
 export default class Firefly {
 	_gv: GlobalVars;
@@ -46,7 +47,7 @@ export default class Firefly {
 		this.getStartFacing();
 
 		this.movementInterval = setInterval(() => {
-			console.log("Moving firefly");
+			// console.log("Moving firefly");
 			this.jump();
 		}, this._gv.gravityIntervalTime)
 	}
@@ -76,8 +77,8 @@ export default class Firefly {
 	 * Main move decision function
 	 */
 	jump() {
-		console.log(this.facing);
-		console.log(this.canGoForwards());
+		// console.log(this.facing);
+		// console.log(this.canGoForwards());
 
 		if (!this.isTurning) {
 			if (!this.isOnCorner()) {
@@ -187,7 +188,7 @@ export default class Firefly {
 	 * Change movement direction if slammed forehead into a wall
 	 */
 	rotate() {
-		console.log(`Rotating: ${this.facing}`);
+		// console.log(`Rotating: ${this.facing}`);
 
 		switch (this.facing) {
 			case "top": // From top to right
@@ -300,16 +301,9 @@ export default class Firefly {
 		}
 	}
 
-	draw(relX: number, relY: number) {
-		this._gv.ctx.fillStyle = this.color;
-		this._gv.ctx.fillRect(
-			relX,
-			relY,
-			this._gv.fieldSize,
-			this._gv.fieldSize,
-		)
-	}
-
+	/**
+	 * Crushed the firefly and creates the explosion
+	 */
 	crush() {
 		console.log("Firefly crushed");
 		clearInterval(this.movementInterval)
@@ -357,8 +351,41 @@ export default class Firefly {
 				}
 			}
 		}
+		if (this.constructor.name == "Butterfly") {
+			this.createDiamonds();
+		}
 		let index = this._gv.allAI.indexOf(this)
 		this._gv.allAI.splice(index, 1);
+	}
+
+	createDiamonds() {
+		console.log("Creating diamonds");
+		for (let y = this.absY - 1; y <= this.absY + 1; y++) {
+			for (let x = this.absX - 1; x <= this.absX + 1; x++) {
+				console.log(y, x);
+
+				this._gv.currLevel[y][x] = 5
+				this._gv.allDynamic.push(
+					new Diamond(
+						this._gv,
+						x - this._gv.displayX,
+						y - this._gv.displayY
+					)
+				)
+			}
+		}
+
+		console.table(this._gv.currLevel)
+	}
+
+	draw(relX: number, relY: number) {
+		this._gv.ctx.fillStyle = this.color;
+		this._gv.ctx.fillRect(
+			relX,
+			relY,
+			this._gv.fieldSize,
+			this._gv.fieldSize,
+		)
 	}
 
 	update() {

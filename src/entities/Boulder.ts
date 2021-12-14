@@ -28,6 +28,8 @@ export default class Boulder {
 		this.absY = y;
 		this.relX = this.absX * this._gv.fieldSize;
 		this.relY = this.absY * this._gv.fieldSize;
+
+		this.fall();
 	}
 
 	draw(relX: number, relY: number) {
@@ -100,13 +102,9 @@ export default class Boulder {
 						})
 
 						if (foundAI.length > 0) {
-							console.log("AI found", foundAI[0]);
 							if (foundAI[0] instanceof Firefly) {
 								foundAI[0].crush();
 							}
-						} else {
-							console.log("not found");
-
 						}
 					}
 				}
@@ -255,8 +253,10 @@ export default class Boulder {
 		alert("Boulder is not collectable lol");
 	}
 
+	/**
+	 * Destroys boulder (e.g. if exploded)
+	 */
 	destroy() {
-		console.log("I'm ded");
 		clearInterval(this.gravityInterval);
 		this._gv.currLevel[this.absY][this.absX] = 0;
 		let index = this._gv.allDynamic.indexOf(this);
