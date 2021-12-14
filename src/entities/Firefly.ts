@@ -32,14 +32,9 @@ export default class Firefly {
 		this.relX = this.absX * this._gv.fieldSize;
 		this.relY = this.absY * this._gv.fieldSize;
 
-		// TODO Walkes over all static and dynamic obstacles - not another AI elements - done
-		// TODO Kills player if walks on him / touches him
-		// TODO Explodes a 3x3 field (destroys everything except BorderWalls) if crushed - done
 		// TODOEXTRA Fireflies overlap each other
 
 		setTimeout(() => {
-			// console.log(this instanceof Firefly);
-
 			this.startMoving();
 		}, 1000);
 	}
@@ -108,21 +103,36 @@ export default class Firefly {
 			case "top":
 				let fieldTop = this._gv.currLevel[this.absY - 1][this.absX]
 				fieldTop == 0 || fieldTop == 6 ? canGoForwards = true : 0
+
+				if (this.absX == this._gv.playerX && this.absY - 1 == this._gv.playerY) {
+					Player.die(this._gv, "fireflied");
+				}
 				break;
 			case "bottom":
 				let fieldBottom = this._gv.currLevel[this.absY + 1][this.absX]
 				fieldBottom == 0 || fieldBottom == 6 ? canGoForwards = true : 0
+
+				if (this.absX == this._gv.playerX && this.absY + 1 == this._gv.playerY) {
+					Player.die(this._gv, "fireflied");
+				}
 				break;
 			case "left":
 				let fieldLeft = this._gv.currLevel[this.absY][this.absX - 1]
 				fieldLeft == 0 || fieldLeft == 6 ? canGoForwards = true : 0;
+
+				if (this.absX - 1 == this._gv.playerX && this.absY == this._gv.playerY) {
+					Player.die(this._gv, "fireflied");
+				}
 				break;
 			case "right":
 				let fieldRight = this._gv.currLevel[this.absY][this.absX + 1]
 				fieldRight == 0 || fieldRight == 6 ? canGoForwards = true : 0;
+
+				if (this.absX + 1 == this._gv.playerX && this.absY == this._gv.playerY) {
+					Player.die(this._gv, "fireflied");
+				}
 				break;
 		}
-
 		return canGoForwards;
 	}
 
@@ -132,24 +142,39 @@ export default class Firefly {
 	move() {
 		switch (this.facing) {
 			case "top":
+				if (this._gv.currLevel[this.absY - 1][this.absX] == 9) {
+					Player.die(this._gv, "fireflied")
+				}
 				this.relY -= this._gv.fieldSize;
 				this._gv.currLevel[this.absY][this.absX] = 0;
 				this._gv.currLevel[this.absY - 1][this.absX] = 6;
 				this.absY--;
 				break;
+
 			case "bottom":
+				if (this._gv.currLevel[this.absY + 1][this.absX] == 9) {
+					Player.die(this._gv, "fireflied")
+				}
 				this.relY += this._gv.fieldSize;
 				this._gv.currLevel[this.absY][this.absX] = 0;
 				this._gv.currLevel[this.absY + 1][this.absX] = 6;
 				this.absY++;
 				break;
+
 			case "left":
+				if (this._gv.currLevel[this.absY][this.absX - 1] == 9) {
+					Player.die(this._gv, "fireflied")
+				}
 				this.relX -= this._gv.fieldSize;
 				this._gv.currLevel[this.absY][this.absX] = 0;
 				this._gv.currLevel[this.absY][this.absX - 1] = 6;
 				this.absX--;
 				break;
+
 			case "right":
+				if (this._gv.currLevel[this.absY][this.absX + 1] == 9) {
+					Player.die(this._gv, "fireflied")
+				}
 				this.relX += this._gv.fieldSize;
 				this._gv.currLevel[this.absY][this.absX] = 0;
 				this._gv.currLevel[this.absY][this.absX + 1] = 6;
@@ -213,16 +238,23 @@ export default class Firefly {
 		// If field diagonally is empty
 		switch (this.facing) {
 			case "top":
-				this._gv.currLevel[this.absY - 1][this.absX - 1] == 0 ? goingToTurn = true : 0
+				let fieldTop = this._gv.currLevel[this.absY - 1][this.absX - 1]
+				fieldTop == 0 || fieldTop == 9 ? goingToTurn = true : 0
 				break;
+
 			case "bottom":
-				this._gv.currLevel[this.absY + 1][this.absX + 1] == 0 ? goingToTurn = true : 0
+				let fieldBot = this._gv.currLevel[this.absY + 1][this.absX + 1]
+				fieldBot == 0 || fieldBot == 9 ? goingToTurn = true : 0
 				break;
+
 			case "left":
-				this._gv.currLevel[this.absY + 1][this.absX - 1] == 0 ? goingToTurn = true : 0
+				let fieldLeft = this._gv.currLevel[this.absY + 1][this.absX - 1]
+				fieldLeft == 0 || fieldLeft == 9 ? goingToTurn = true : 0
 				break;
+
 			case "right":
-				this._gv.currLevel[this.absY - 1][this.absX + 1] == 0 ? goingToTurn = true : 0
+				let fieldRight = this._gv.currLevel[this.absY - 1][this.absX + 1]
+				fieldRight == 0 || fieldRight == 9 ? goingToTurn = true : 0
 				break;
 		}
 		// console.log("is on corner: ", goingToTurn);
@@ -280,13 +312,12 @@ export default class Firefly {
 
 	crush() {
 		console.log("Firefly crushed");
-
 		clearInterval(this.movementInterval)
 
 		for (let y = this.absY - 1; y <= this.absY + 1; y++) {
 			for (let x = this.absX - 1; x <= this.absX + 1; x++) {
 				let field = this._gv.currLevel[y][x];
-				console.log(field);
+				// console.log(field);
 
 				if (field != 1) {
 					let foundStatic = this._gv.allElements.filter((el) => {
@@ -320,11 +351,8 @@ export default class Firefly {
 									Player.die(this._gv, "exploded");
 								}
 							}
-
 						}
 					}
-
-					console.log("Destroy entity");
 					this._gv.currLevel[y][x] = 0;
 				}
 			}

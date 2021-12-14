@@ -261,8 +261,6 @@ export default class Player {
 	 */
 	checkIfWalkedOnSth() {
 		let found = this._gv.allElements.filter((el) => { return el.relX == this.relX && el.relY == this.relY })
-		// console.log(found, this._gv.allElements, this.posX, this.posY);
-
 		if (found.length > 0) {
 			let index = this._gv.allElements.indexOf(found[0])
 			Board.removeEl(
@@ -275,14 +273,17 @@ export default class Player {
 			let foundDyn = this._gv.allDynamic.filter((el) => { return el.relX == this.relX && el.relY == this.relY })
 			if (foundDyn.length > 0) {
 				let name = foundDyn[0].constructor.name
-				switch (name) {
-					case "Diamond":
-						Player.collectDiamond(this._gv, foundDyn[0]);
-						break;
-
-					default:
-						console.log(`Deleting: ${name} - no case`);
-						break;
+				if (name == "Diamond") {
+					Player.collectDiamond(this._gv, foundDyn[0]);
+				}
+			} else {
+				let foundAI = this._gv.allAI.filter((el) => {
+					return el.relX == this.relX && el.relY == this.relY
+				})
+				if (foundAI.length > 0) {
+					if (foundAI[0].constructor.name == "Firefly") {
+						Player.die(this._gv, "fireflied")
+					}
 				}
 			}
 		}
@@ -369,6 +370,10 @@ export default class Player {
 		let boulders: Boulder[] = gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
 		for (let boulder of boulders) {
 			clearInterval(boulder.gravityInterval)
+		}
+		// Stop AI moving 
+		for (let ai of gv.allAI) {
+			clearInterval(ai.movementInterval);
 		}
 		// Show end game picture
 		setTimeout(() => {
