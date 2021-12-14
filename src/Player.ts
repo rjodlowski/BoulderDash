@@ -293,7 +293,7 @@ export default class Player {
 	 * @param side left | right
 	 */
 	checkIfMovesSth(side: string) {
-		console.log("checkIfMovesSth: ", side);
+		// console.log("checkIfMovesSth: ", side);
 
 		switch (side) {
 			case "left":
@@ -308,10 +308,10 @@ export default class Player {
 				if (entityLeft.length > 0) {
 					let name = entityLeft[0].constructor.name
 					if (name == "Boulder") {
-						console.log("Boulder / diamond moved:", side);
+						// console.log("Boulder / diamond moved:", side);
 						entityLeft[0].moveByPlayer(side)
 					} else if (name == "Diamond") {
-						console.log("Walked on a diamond");
+						// console.log("Walked on a diamond");
 					} else {
 						console.log("Different obj");
 					}
@@ -332,10 +332,10 @@ export default class Player {
 					console.log(name);
 
 					if (name == "Boulder") {
-						console.log("Boulder / diamond moved:", side);
+						// console.log("Boulder / diamond moved:", side);
 						entityRight[0].moveByPlayer(side)
 					} else if (name == "Diamond") {
-						console.log("Walked on a diamond");
+						// console.log("Walked on a diamond");
 					} else {
 						console.log("Different obj");
 					}
@@ -349,7 +349,7 @@ export default class Player {
 	 * @param diamond to be collected
 	 */
 	public static collectDiamond(gv: GlobalVars, diamond: Boulder | Diamond) {
-		console.log("Player collected a diamond!");
+		// console.log("Player collected a diamond!");
 		diamond.collect();
 
 		//TODO Update point display

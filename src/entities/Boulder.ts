@@ -29,11 +29,11 @@ export default class Boulder {
 		this.relY = this.absY * this._gv.fieldSize;
 	}
 
-	draw(posX: number, posY: number) {
+	draw(relX: number, relY: number) {
 		this._gv.ctx.fillStyle = this.color;
 		this._gv.ctx.fillRect(
-			posX,
-			posY,
+			relX,
+			relY,
 			this._gv.fieldSize,
 			this._gv.fieldSize,
 		)
@@ -169,7 +169,7 @@ export default class Boulder {
 		let directions = this.canRollDown();
 
 		if (directions.length > 0 && this.falling) {
-			console.log("Rolling down", directions[0]);
+			// console.log("Rolling down", directions[0]);
 			switch (directions[0]) {
 				case "left":
 					// Move relatively

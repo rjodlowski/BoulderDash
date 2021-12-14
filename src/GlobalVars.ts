@@ -2,6 +2,7 @@ import BorderWall from "./entities/BorderWall";
 import Boulder from "./entities/Boulder";
 import Diamond from "./entities/Diamond";
 import Dirt from "./entities/Dirt";
+import Firefly from "./entities/Firefly";
 import InnerWall from "./entities/InnerWall";
 
 export default class GlobalVars {
@@ -19,7 +20,7 @@ export default class GlobalVars {
 	pointsPerDiamondCollected: number = 10;
 
 	// Game variables
-	currLevelNumber: number = 0; // Mumber of the current level
+	currLevelNumber: number = 1; // Mumber of the current level
 	levelWidth: number; // Width of a level in fields
 	levelHeight: number;
 	currLevel: number[][] = [[]]; // Current level
@@ -45,5 +46,8 @@ export default class GlobalVars {
 	allDynamic: Array<
 		Boulder |
 		Diamond
+	> = []
+	allAI: Array<
+		Firefly
 	> = []
 }

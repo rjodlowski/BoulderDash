@@ -2,6 +2,7 @@ import BorderWall from "./entities/BorderWall";
 import Boulder from "./entities/Boulder";
 import Diamond from "./entities/Diamond";
 import Dirt from "./entities/Dirt";
+import Firefly from "./entities/Firefly";
 import InnerWall from "./entities/InnerWall";
 import GlobalVars from "./GlobalVars";
 import levels from "./levels/Levels";
@@ -161,8 +162,11 @@ export default class Board {
 	public static moveDynamicMandatory(gv: GlobalVars, direction: string) {
 		// console.log("Moving all dynamic entities: ", direction);
 
-		for (let i = 0; i < gv.allDynamic.length; i++) {
-			gv.allDynamic[i].mandatoryMove(direction)
+		for (let dynamic of gv.allDynamic) {
+			dynamic.mandatoryMove(direction)
+		}
+		for (let ai of gv.allAI) {
+			ai.mandatoryMove(direction)
 		}
 	}
 
@@ -224,6 +228,8 @@ export default class Board {
 						break;
 					case 5: // Diamond 
 						break;
+					case 6: // Firefly 
+						break;
 
 					case 9: // Player
 						// console.log(`Creating player: x:${x}, y:${y}`);
@@ -252,6 +258,10 @@ export default class Board {
 				} else if (this._gv.currLevel[y][x] == 5) {
 					this._gv.allDynamic.push(
 						new Diamond(this._gv, x, y)
+					)
+				} else if (this._gv.currLevel[y][x] == 6) {
+					this._gv.allAI.push(
+						new Firefly(this._gv, x, y)
 					)
 				}
 			}
@@ -296,13 +306,18 @@ export default class Board {
 		}
 
 		// Update allElements on board
-		for (let i: number = 0; i < this._gv.allElements.length; i++) {
-			this._gv.allElements[i].update();
+		for (let element of this._gv.allElements) {
+			element.update();
 		}
 
 		// Update all dynamic elements
-		for (let i: number = 0; i < this._gv.allDynamic.length; i++) {
-			this._gv.allDynamic[i].update();
+		for (let dynamic of this._gv.allDynamic) {
+			dynamic.update();
+		}
+
+		// Update all AI elements
+		for (let ai of this._gv.allAI) {
+			ai.update();
 		}
 	}
 }
