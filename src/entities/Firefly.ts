@@ -2,6 +2,7 @@ import GlobalVars from "../GlobalVars";
 import Dirt from "./Dirt";
 import Diamond from "./Diamond";
 import Player from "../Player";
+import Butterfly from "./Butterfly";
 
 export default class Firefly {
 	_gv: GlobalVars;
@@ -338,8 +339,10 @@ export default class Firefly {
 								return el.absX == x && el.absY == y;
 							})
 							if (foundAI.length > 0 && foundAI[0].absX != this.absX && foundAI[0].absY != this.absY) {
-								// Blast another AI
-								foundAI[0].crush();
+								if (foundAI[0] instanceof Firefly || foundAI[0] instanceof Butterfly) {
+									// Blast another AI
+									foundAI[0].crush();
+								}
 							} else {
 								if (this._gv.playerX == x && this._gv.playerY == y) {
 									Player.die(this._gv, "exploded");

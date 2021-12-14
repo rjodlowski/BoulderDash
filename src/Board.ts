@@ -8,6 +8,7 @@ import Butterfly from "./entities/Butterfly";
 import Firefly from "./entities/Firefly";
 import Boulder from "./entities/Boulder";
 import Diamond from "./entities/Diamond";
+import Ameba from "./entities/Ameba";
 
 export default class Board {
 	_gv: GlobalVars;
@@ -233,6 +234,8 @@ export default class Board {
 						break;
 					case 7: // Butterfly 
 						break;
+					case 8: // Ameba 
+						break;
 
 					case 9: // Player
 						// console.log(`Creating player: x:${x}, y:${y}`);
@@ -270,6 +273,10 @@ export default class Board {
 					this._gv.allAI.push(
 						new Butterfly(this._gv, x, y)
 					)
+				} else if (this._gv.currLevel[y][x] == 8) {
+					// this._gv.allAI.push(
+					new Ameba(this._gv, x, y)
+					// )
 				}
 			}
 		}

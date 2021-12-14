@@ -1,9 +1,12 @@
+import Ameba from "./entities/Ameba";
 import BorderWall from "./entities/BorderWall";
 import Boulder from "./entities/Boulder";
+import Butterfly from "./entities/Butterfly";
 import Diamond from "./entities/Diamond";
 import Dirt from "./entities/Dirt";
 import Firefly from "./entities/Firefly";
 import InnerWall from "./entities/InnerWall";
+import SmolAmeba from "./entities/SmolAmeba";
 
 export default class GlobalVars {
 	// Canvas variables
@@ -26,6 +29,7 @@ export default class GlobalVars {
 	currLevel: number[][] = [[]]; // Current level
 	scenePart: number[][] = [[]] // Shown part of the level
 	gravityIntervalTime: number = 1000;
+	amebaLimit: number = 10; // Max ameba size in order to change into diamonds
 
 	// Board display variables
 	displayX: number = 0; // x of the top left field of a displayed background
@@ -48,6 +52,9 @@ export default class GlobalVars {
 		Diamond
 	> = []
 	allAI: Array<
-		Firefly
+		Firefly |
+		Butterfly |
+		Ameba |
+		SmolAmeba
 	> = []
 }

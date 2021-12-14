@@ -1,6 +1,8 @@
 import Board from "./Board";
 import Boulder from "./entities/Boulder";
+import Butterfly from "./entities/Butterfly";
 import Diamond from "./entities/Diamond";
+import Firefly from "./entities/Firefly";
 import GlobalVars from "./GlobalVars";
 
 export default class Player {
@@ -381,7 +383,9 @@ export default class Player {
 		}
 		// Stop AI moving 
 		for (let ai of gv.allAI) {
-			clearInterval(ai.movementInterval);
+			if (ai instanceof Firefly || ai instanceof Butterfly) {
+				clearInterval(ai.movementInterval);
+			}
 		}
 		// Show end game picture
 		setTimeout(() => {
