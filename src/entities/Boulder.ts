@@ -1,5 +1,6 @@
 import GlobalVars from "../GlobalVars";
 import Player from "../Player";
+import Firefly from "./Firefly";
 
 export default class Boulder {
 	_gv: GlobalVars;
@@ -93,6 +94,20 @@ export default class Boulder {
 						} else {
 							return false;
 						}
+					} else {
+						let foundAI = this._gv.allAI.filter((el) => {
+							return el.absX == this.absX && el.absY == this.absY + 1;
+						})
+
+						if (foundAI.length > 0) {
+							console.log("AI found", foundAI[0]);
+							if (foundAI[0] instanceof Firefly) {
+								foundAI[0].crush();
+							}
+						} else {
+							console.log("not found");
+
+						}
 					}
 				}
 			} else {
@@ -100,6 +115,14 @@ export default class Boulder {
 			}
 
 			if (fieldBeneath != undefined) {
+				if (
+					this instanceof Boulder && fieldBeneath instanceof Firefly
+					// this instanceof Boulder && fieldBeneath instanceof Butterfly
+				) {
+					console.log("firefly found");
+
+					fieldBeneath.crush();
+				}
 				return fieldBeneath.entityPassable;
 			}
 		}
@@ -230,6 +253,14 @@ export default class Boulder {
 	 */
 	collect() {
 		alert("Boulder is not collectable lol");
+	}
+
+	destroy() {
+		console.log("I'm ded");
+		clearInterval(this.gravityInterval);
+		this._gv.currLevel[this.absY][this.absX] = 0;
+		let index = this._gv.allDynamic.indexOf(this);
+		this._gv.allDynamic.splice(index, 1);
 	}
 
 	update() {

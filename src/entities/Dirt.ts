@@ -31,6 +31,11 @@ export default class Dirt {
 		}
 	}
 
+	delete() {
+		let index = this._gv.allElements.indexOf(this);
+		this._gv.allElements.splice(index, 1);
+	}
+
 	draw(relX: number, relY: number) {
 		this._gv.ctx.fillStyle = this.color;
 		this._gv.ctx.fillRect(

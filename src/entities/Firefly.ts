@@ -1,9 +1,6 @@
 import GlobalVars from "../GlobalVars";
-import BorderWall from "./BorderWall";
-import Boulder from "./Boulder";
-import Diamond from "./Diamond";
+import Player from "../Player";
 import Dirt from "./Dirt";
-import InnerWall from "./InnerWall";
 
 export default class Firefly {
 	_gv: GlobalVars;
@@ -35,13 +32,14 @@ export default class Firefly {
 		this.relX = this.absX * this._gv.fieldSize;
 		this.relY = this.absY * this._gv.fieldSize;
 
-		// TODO Moves near the walls always on the same side (left) -> done
 		// TODO Walkes over all static and dynamic obstacles - not another AI elements - done
 		// TODO Kills player if walks on him / touches him
-		// TODO Explodes a 3x3 field (destroys everything except BorderWalls) if crushed
+		// TODO Explodes a 3x3 field (destroys everything except BorderWalls) if crushed - done
 		// TODOEXTRA Fireflies overlap each other
 
 		setTimeout(() => {
+			// console.log(this instanceof Firefly);
+
 			this.startMoving();
 		}, 1000);
 	}
@@ -108,16 +106,20 @@ export default class Firefly {
 
 		switch (this.facing) {
 			case "top":
-				this._gv.currLevel[this.absY - 1][this.absX] == 0 ? canGoForwards = true : 0
+				let fieldTop = this._gv.currLevel[this.absY - 1][this.absX]
+				fieldTop == 0 || fieldTop == 6 ? canGoForwards = true : 0
 				break;
 			case "bottom":
-				this._gv.currLevel[this.absY + 1][this.absX] == 0 ? canGoForwards = true : 0
+				let fieldBottom = this._gv.currLevel[this.absY + 1][this.absX]
+				fieldBottom == 0 || fieldBottom == 6 ? canGoForwards = true : 0
 				break;
 			case "left":
-				this._gv.currLevel[this.absY][this.absX - 1] == 0 ? canGoForwards = true : 0;
+				let fieldLeft = this._gv.currLevel[this.absY][this.absX - 1]
+				fieldLeft == 0 || fieldLeft == 6 ? canGoForwards = true : 0;
 				break;
 			case "right":
-				this._gv.currLevel[this.absY][this.absX + 1] == 0 ? canGoForwards = true : 0;
+				let fieldRight = this._gv.currLevel[this.absY][this.absX + 1]
+				fieldRight == 0 || fieldRight == 6 ? canGoForwards = true : 0;
 				break;
 		}
 
@@ -274,6 +276,61 @@ export default class Firefly {
 			this._gv.fieldSize,
 			this._gv.fieldSize,
 		)
+	}
+
+	crush() {
+		console.log("Firefly crushed");
+
+		clearInterval(this.movementInterval)
+
+		for (let y = this.absY - 1; y <= this.absY + 1; y++) {
+			for (let x = this.absX - 1; x <= this.absX + 1; x++) {
+				let field = this._gv.currLevel[y][x];
+				console.log(field);
+
+				if (field != 1) {
+					let foundStatic = this._gv.allElements.filter((el) => {
+						return el.absX == x && el.absY == y;
+					})
+
+					if (foundStatic.length > 0) {
+						// Destroy it
+						if (foundStatic[0] instanceof Dirt) {
+							foundStatic[0].delete();
+						}
+					} else {
+						// Search dynamic 
+						let foundDynamic = this._gv.allDynamic.filter((el) => {
+							return el.absX == x && el.absY == y;
+						})
+
+						if (foundDynamic.length > 0) {
+							// Destroy dynamic 
+							foundDynamic[0].destroy();
+						} else {
+							// Search AI
+							let foundAI = this._gv.allAI.filter((el) => {
+								return el.absX == x && el.absY == y;
+							})
+							if (foundAI.length > 0 && foundAI[0].absX != this.absX && foundAI[0].absY != this.absY) {
+								// Blast another AI
+								foundAI[0].crush();
+							} else {
+								if (this._gv.playerX == x && this._gv.playerY == y) {
+									Player.die(this._gv, "exploded");
+								}
+							}
+
+						}
+					}
+
+					console.log("Destroy entity");
+					this._gv.currLevel[y][x] = 0;
+				}
+			}
+		}
+		let index = this._gv.allAI.indexOf(this)
+		this._gv.allAI.splice(index, 1);
 	}
 
 	update() {
