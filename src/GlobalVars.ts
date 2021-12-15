@@ -30,6 +30,7 @@ export default class GlobalVars {
 	scenePart: number[][] = [[]] // Shown part of the level
 	gravityIntervalTime: number = 1000;
 	amebaLimit: number = 10; // Max ameba size in order to change into diamonds
+	smolAmebaCount: number = 0;
 
 	// Board display variables
 	displayX: number = 0; // x of the top left field of a displayed background

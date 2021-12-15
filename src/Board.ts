@@ -168,7 +168,9 @@ export default class Board {
 			dynamic.mandatoryMove(direction)
 		}
 		for (let ai of gv.allAI) {
-			ai.mandatoryMove(direction)
+			if (!(ai instanceof Ameba)) {
+				ai.mandatoryMove(direction)
+			}
 		}
 	}
 
@@ -331,7 +333,9 @@ export default class Board {
 
 		// Update all AI elements
 		for (let ai of this._gv.allAI) {
-			ai.update();
+			if (!(ai instanceof Ameba)) {
+				ai.update();
+			}
 		}
 	}
 }

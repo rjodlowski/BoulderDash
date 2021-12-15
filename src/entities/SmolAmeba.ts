@@ -4,7 +4,6 @@ import Dirt from "./Dirt";
 export default class SmolAmeba {
 	_gv: GlobalVars;
 
-	// Origin positions
 	// Relative position
 	relX: number // [px]
 	relY: number // [px]
@@ -18,8 +17,6 @@ export default class SmolAmeba {
 	canExpand: boolean = true;
 
 	constructor(gv: GlobalVars, x: number, y: number) {
-		console.log("Smol created");
-
 		this._gv = gv;
 
 		this.absX = x;
@@ -33,8 +30,6 @@ export default class SmolAmeba {
 	  * @param direction top | bottom | left | right
 	  */
 	mandatoryMove(direction: string) {
-		// console.log("Moving me: ", direction);
-
 		switch (direction) {
 			case "top":
 				this.relY += this._gv.fieldSize;
@@ -62,12 +57,11 @@ export default class SmolAmeba {
 		let topField = this._gv.currLevel[this.absY - 1][this.absX];
 		if (topField == 0 || topField == 3) { // Empty field or dirt
 			if (topField == 3) {
-				// delete top field
 				let dirtToDelete = this._gv.allElements.filter((el) => {
 					return el.absX == this.absX && el.absY == this.absY - 1
 				})
 				if (dirtToDelete.length > 0 && dirtToDelete[0] instanceof Dirt) {
-					console.log("deleting dirt");
+					// console.log("deleting dirt");
 					dirtToDelete[0].delete();
 				}
 			}
@@ -81,7 +75,7 @@ export default class SmolAmeba {
 					return el.absX == this.absX && el.absY == this.absY + 1
 				})
 				if (dirtToDelete.length > 0 && dirtToDelete[0] instanceof Dirt) {
-					console.log("deleting dirt");
+					// console.log("deleting dirt");
 					dirtToDelete[0].delete();
 				}
 			}
@@ -95,7 +89,7 @@ export default class SmolAmeba {
 					return el.absX == this.absX - 1 && el.absY == this.absY
 				})
 				if (dirtToDelete.length > 0 && dirtToDelete[0] instanceof Dirt) {
-					console.log("deleting dirt");
+					// console.log("deleting dirt");
 					dirtToDelete[0].delete();
 				}
 			}
@@ -109,7 +103,7 @@ export default class SmolAmeba {
 					return el.absX == this.absX + 1 && el.absY == this.absY
 				})
 				if (dirtToDelete.length > 0 && dirtToDelete[0] instanceof Dirt) {
-					console.log("deleting dirt");
+					// console.log("deleting dirt");
 					dirtToDelete[0].delete();
 				}
 			}
@@ -119,6 +113,14 @@ export default class SmolAmeba {
 		directions.length > 0 ? this.canExpand = true : this.canExpand = false;
 
 		return directions;
+	}
+
+	/**
+	 * Remove smol ameba when crushed by a rock
+	 */
+	delete() {
+		let index = this._gv.allAI.indexOf(this);
+		this._gv.allAI.splice(index, 1);
 	}
 
 	draw(relX: number, relY: number) {

@@ -1,4 +1,6 @@
 import GlobalVars from "../GlobalVars";
+import Boulder from "./Boulder";
+import Diamond from "./Diamond";
 import SmolAmeba from "./SmolAmeba";
 
 export default class Ameba {
@@ -13,10 +15,9 @@ export default class Ameba {
 	absX: number // level coord
 	absY: number // level coord
 
-	smolAmebas: SmolAmeba[] = [];
-
 	expandInterval: NodeJS.Timer;
-	expandedDuringIteration: number = 0;
+	expandedDuringIteration: number = 1;
+	// smolCount: number = 1;
 
 	constructor(gv: GlobalVars, x: number, y: number) {
 		console.log("Ameba created");
@@ -32,53 +33,42 @@ export default class Ameba {
 		this._gv.allAI.push(
 			new SmolAmeba(this._gv, this.absX, this.absY)
 		)
+		this._gv.smolAmebaCount++;
 		this.expand();
 
-		// TODO Player interaction with small ameba (?)
-		// TODO Boulder interaction with small ameba (crushing)
-		// TODO Boulder interaction -> swapping dirt under boulder -> no crush - done
-		// TODO Ameba stops growing if no space
-	}
-
-	/**
-	  * Movement based on board shifting
-	  * @param direction top | bottom | left | right
-	  */
-	mandatoryMove(direction: string) {
-		// 	// move all smol amebas
-		// 	for (let smol of this._gv.allAI) {
-		// 		smol.mandatoryMove(direction);
-		// 	}
+		// Player interaction with small ameba (blocks the wae) -> done
+		// Boulder interaction with small ameba (crushing) - done
+		// Boulder interaction -> swapping dirt under boulder -> no crush - done
+		// Ameba stops growing if no space (detection) - done
+		// Ameba changes into Diamonds or Boulders depending on size - done
 	}
 
 	/**
 	 * Main grow function
 	 */
 	expand() {
-		// this.expandInterval = setInterval(() => {
-		setTimeout(() => {
-			console.log("expansion iteration");
-			// this.expandedDuringIteration = 0; TODO reset counter somehow
-			this.contaminate()
-			// setTimeout(() => {
-			// 	console.log("expansion iteration2");
-			// 	this.contaminate()
-			// }, 5000);
-		}, 5000);
-		// }, this._gv.gravityIntervalTime * 5)
+		this.expandInterval = setInterval(() => {
+			if (this.expandedDuringIteration != 0) {
+				console.log("expansion iteration");
+				this.contaminate()
+			} else {
+				clearInterval(this.expandInterval);
+				console.log("Stopped growing");
+				this.finishExisting();
+			}
+		}, this._gv.gravityIntervalTime * 5)
 	}
 
 	/**
 	 * A single iteration of ameba's expansion
 	 */
 	contaminate() {
-		console.log("Expanding big");
+		this.expandedDuringIteration = 0;
 		let amebasOnStart = this._gv.allAI.map((el) => { return el });
 
 		for (let ameba of amebasOnStart) {
 			if (ameba instanceof SmolAmeba && ameba.canExpand) {
 				let canExpandInto: string[] = ameba.canExpandInto();
-				console.log(this, canExpandInto);
 
 				for (let direction of canExpandInto) {
 					switch (direction) {
@@ -87,13 +77,8 @@ export default class Ameba {
 								if (this._gv.allAI.filter((el) => {
 									return el.absX == ameba.absX && el.absY == ameba.absY - 1
 								}).length == 0) {
-									console.log("expanding top");
 									this.addNewAmeba(ameba.absX, ameba.absY - 1);
-								} else {
-									console.log("Smol ameba exists");
 								}
-							} else {
-								// Handle player interaction
 							}
 							break;
 						case "bottom":
@@ -101,13 +86,8 @@ export default class Ameba {
 								if (this._gv.allAI.filter((el) => {
 									return el.absX == ameba.absX && el.absY == ameba.absY + 1
 								}).length == 0) {
-									console.log("expanding bottom");
 									this.addNewAmeba(ameba.absX, ameba.absY + 1);
-								} else {
-									console.log("Smol ameba exists");
 								}
-							} else {
-								// Handle player interaction
 							}
 							break;
 						case "left":
@@ -115,13 +95,8 @@ export default class Ameba {
 								if (this._gv.allAI.filter((el) => {
 									return el.absX == ameba.absX - 1 && el.absY == ameba.absY
 								}).length == 0) {
-									console.log("expanding left");
 									this.addNewAmeba(ameba.absX - 1, ameba.absY);
-								} else {
-									console.log("Smol ameba exists");
 								}
-							} else {
-								// Handle player interaction
 							}
 							break;
 						case "right":
@@ -129,20 +104,14 @@ export default class Ameba {
 								if (this._gv.allAI.filter((el) => {
 									return el.absX == ameba.absX + 1 && el.absY == ameba.absY
 								}).length == 0) {
-									console.log("expanding right");
 									this.addNewAmeba(ameba.absX + 1, ameba.absY);
-								} else {
-									console.log("Smol ameba exists");
 								}
-							} else {
-								// Handle player interaction
 							}
 							break;
 					}
 				}
 			}
 		}
-		console.log(this._gv.allAI);
 	}
 
 	/**
@@ -151,19 +120,40 @@ export default class Ameba {
 	 * @param y absY of the new SmolAmeba
 	 */
 	addNewAmeba(x: number, y: number) {
-		// this.smolAmebas.push(
 		this._gv.allAI.push(
 			new SmolAmeba(this._gv, x, y)
 		)
 		this._gv.currLevel[y][x] = 8;
 		this.expandedDuringIteration++;
-
-		// console.table(this._gv.currLevel);
+		this._gv.smolAmebaCount++;
 	}
 
-	update() {
-		// for (let ameba of this.smolAmebas) {
-		// 	ameba.update();
-		// }
+	/**
+	 * Turn into Boulders or Diamonds if cannot expand anymore
+	 */
+	finishExisting() {
+		let smols = this._gv.allAI.filter((el) => { return el.constructor.name == "SmolAmeba" })
+
+		if (this._gv.smolAmebaCount < this._gv.amebaLimit) {
+			// console.log("Turnin into Diamonds");
+			for (let smol of smols) {
+				let diamond = new Diamond(this._gv, smol.absX, smol.absY);
+
+				let index = this._gv.allAI.indexOf(smol);
+				this._gv.allAI.splice(index, 1);
+
+				this._gv.allDynamic.push(diamond);
+			}
+		} else {
+			// console.log("Turnin into Boulders");
+			for (let smol of smols) {
+				let diamond = new Boulder(this._gv, smol.absX, smol.absY);
+
+				let index = this._gv.allAI.indexOf(smol);
+				this._gv.allAI.splice(index, 1);
+
+				this._gv.allDynamic.push(diamond);
+			}
+		}
 	}
 }

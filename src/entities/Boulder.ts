@@ -107,7 +107,13 @@ export default class Boulder {
 							if (foundAI[0] instanceof Firefly) {
 								foundAI[0].crush();
 							} else if (foundAI[0] instanceof SmolAmeba) {
-								return false;
+								if (this.falling) {
+									foundAI[0].delete();
+									this._gv.smolAmebaCount--;
+									return true;
+								} else {
+									return false;
+								}
 							}
 						}
 					}
