@@ -309,6 +309,9 @@ export default class Firefly {
 		console.log("Firefly crushed");
 		clearInterval(this.movementInterval)
 
+		console.log(this.absY, this.absX);
+
+
 		for (let y = this.absY - 1; y <= this.absY + 1; y++) {
 			for (let x = this.absX - 1; x <= this.absX + 1; x++) {
 				let field = this._gv.currLevel[y][x];
@@ -339,8 +342,13 @@ export default class Firefly {
 								return el.absX == x && el.absY == y;
 							})
 							if (foundAI.length > 0 && foundAI[0].absX != this.absX && foundAI[0].absY != this.absY) {
-								if (foundAI[0] instanceof Firefly || foundAI[0] instanceof Butterfly) {
+								if (
+									// foundAI[0] != this &&
+									(foundAI[0] instanceof Firefly || foundAI[0] instanceof Butterfly)
+								) {
 									// Blast another AI
+									console.log("Blasting");
+
 									foundAI[0].crush();
 								}
 							} else {
@@ -371,8 +379,8 @@ export default class Firefly {
 				this._gv.allDynamic.push(
 					new Diamond(
 						this._gv,
-						x - this._gv.displayX,
-						y - this._gv.displayY
+						x,
+						y
 					)
 				)
 			}

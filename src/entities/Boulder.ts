@@ -28,8 +28,8 @@ export default class Boulder {
 
 		this.absX = x;
 		this.absY = y;
-		this.relX = this.absX * this._gv.fieldSize;
-		this.relY = this.absY * this._gv.fieldSize;
+		this.relX = (this.absX - this._gv.displayX) * this._gv.fieldSize;
+		this.relY = (this.absY - this._gv.displayY) * this._gv.fieldSize;
 
 		this.fall();
 	}
