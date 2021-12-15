@@ -36,7 +36,7 @@ export default class Ameba {
 
 		// TODO Player interaction with small ameba (?)
 		// TODO Boulder interaction with small ameba (crushing)
-		// TODO Boulder interaction -> swapping dirt under boulder -> no crush
+		// TODO Boulder interaction -> swapping dirt under boulder -> no crush - done
 		// TODO Ameba stops growing if no space
 	}
 

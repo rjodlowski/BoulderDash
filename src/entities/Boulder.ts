@@ -1,6 +1,8 @@
 import GlobalVars from "../GlobalVars";
 import Player from "../Player";
+import Butterfly from "./Butterfly";
 import Firefly from "./Firefly";
+import SmolAmeba from "./SmolAmeba";
 
 export default class Boulder {
 	_gv: GlobalVars;
@@ -104,6 +106,8 @@ export default class Boulder {
 						if (foundAI.length > 0) {
 							if (foundAI[0] instanceof Firefly) {
 								foundAI[0].crush();
+							} else if (foundAI[0] instanceof SmolAmeba) {
+								return false;
 							}
 						}
 					}
@@ -114,8 +118,8 @@ export default class Boulder {
 
 			if (fieldBeneath != undefined) {
 				if (
-					this instanceof Boulder && fieldBeneath instanceof Firefly
-					// this instanceof Boulder && fieldBeneath instanceof Butterfly
+					this instanceof Boulder && fieldBeneath instanceof Firefly ||
+					this instanceof Boulder && fieldBeneath instanceof Butterfly
 				) {
 					console.log("firefly found");
 
