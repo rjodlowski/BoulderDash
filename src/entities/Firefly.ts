@@ -35,10 +35,6 @@ export default class Firefly {
 		this.relY = this.absY * this._gv.fieldSize;
 
 		// TODOEXTRA Fireflies overlap each other
-
-		setTimeout(() => {
-			this.startMoving();
-		}, 1000);
 	}
 
 	/**
@@ -50,7 +46,7 @@ export default class Firefly {
 		this.movementInterval = setInterval(() => {
 			// console.log("Moving firefly");
 			this.jump();
-		}, this._gv.gravityIntervalTime)
+		}, this._gv.gravityIntervalTime * 2)
 	}
 
 	/**
@@ -274,7 +270,7 @@ export default class Firefly {
 		this.move();
 		setTimeout(() => {
 			this.turnRotate();
-			this.move();
+			// this.move();
 			this.isTurning = false;
 		}, this._gv.gravityIntervalTime);
 	}

@@ -13,21 +13,23 @@ export default class Keyboard {
 	}
 
 	keyPressed(event: KeyboardEvent) {
-		let key: string = event.key
-		// console.log(key);
+		if (this._gv.playerCanMove) {
+			let key: string = event.key
+			// console.log(key);
 
-		// Move player
-		if (event.repeat != true) {
-			if (key == "a" || key == "ArrowLeft") {
-				this._player.move("left")
-			} else if (key == "d" || key == "ArrowRight") {
-				this._player.move("right")
-			} else if (key == "w" || key == "ArrowUp") {
-				this._player.move("up")
-			} else if (key == "s" || key == "ArrowDown") {
-				this._player.move("down")
-			} else if (key == " ") {
-				this._gv.runRender = !this._gv.runRender;
+			// Move player
+			if (event.repeat != true) {
+				if (key == "a" || key == "ArrowLeft") {
+					this._player.move("left")
+				} else if (key == "d" || key == "ArrowRight") {
+					this._player.move("right")
+				} else if (key == "w" || key == "ArrowUp") {
+					this._player.move("up")
+				} else if (key == "s" || key == "ArrowDown") {
+					this._player.move("down")
+				} else if (key == " ") {
+					this._gv.runRender = !this._gv.runRender;
+				}
 			}
 		}
 	}

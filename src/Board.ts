@@ -9,6 +9,7 @@ import Firefly from "./entities/Firefly";
 import Boulder from "./entities/Boulder";
 import Diamond from "./entities/Diamond";
 import Ameba from "./entities/Ameba";
+import Entrance from "./entities/Entrance";
 
 export default class Board {
 	_gv: GlobalVars;
@@ -23,6 +24,8 @@ export default class Board {
 
 	public static playerMoved: boolean = false;
 
+	timerUpdateInterval: NodeJS.Timer;
+
 	constructor(gv: GlobalVars) {
 		this._gv = gv;
 
@@ -33,12 +36,99 @@ export default class Board {
 			right: false,
 		}
 
+		this.createStats();
 		this.setLevel(this._gv.currLevelNumber);
 		this.createCanvas();
 		this.checkWalls();
 		this.getPartOfScene();
 		this.displayScene();
 		this.generateBoulders();
+
+		this.startGame();
+	}
+
+	createStats() {
+		this._gv.statsDiv = document.createElement("div") as HTMLDivElement;
+		this._gv.levelNumberDiv = document.createElement("div") as HTMLDivElement;
+		this._gv.diamondsCollectedDiv = document.createElement("div") as HTMLDivElement;
+		this._gv.diamondsToCollectDiv = document.createElement("div") as HTMLDivElement;
+		this._gv.timeLeftDiv = document.createElement("div") as HTMLDivElement;
+		this._gv.scoreDiv = document.createElement("div") as HTMLDivElement;
+
+		this._gv.statsDiv.id = "statsDiv";
+		this._gv.levelNumberDiv.id = "levelNumber";
+		this._gv.diamondsCollectedDiv.id = "diamondsCollected";
+		this._gv.diamondsToCollectDiv.id = "diamondsToCollect";
+		this._gv.timeLeftDiv.id = "timeLeft";
+		this._gv.scoreDiv.id = "score";
+
+		this._gv.statsDiv.style.width = `${this._gv.canvasWidth}px`;
+
+		this._gv.levelNumberDiv.innerText = `${this._gv.currLevelNumber + 1}`;
+		this._gv.diamondsCollectedDiv.innerText = `${this._gv.diamondsCollected}`;
+		this._gv.diamondsToCollectDiv.innerText = `${this._gv.diamondsToCollectNumber}`;
+		this._gv.timeLeftDiv.innerText = `${this._gv.timeLeft}`;
+		this._gv.scoreDiv.innerText = `${this._gv.score}`;
+
+		this._gv.statsDiv.appendChild(this._gv.levelNumberDiv)
+		this._gv.statsDiv.appendChild(this._gv.diamondsCollectedDiv)
+		this._gv.statsDiv.appendChild(this._gv.diamondsToCollectDiv)
+		this._gv.statsDiv.appendChild(this._gv.timeLeftDiv)
+		this._gv.statsDiv.appendChild(this._gv.scoreDiv)
+
+		this._gv.app.appendChild(this._gv.statsDiv);
+	}
+
+	async startGame() {
+		// await this.sleep(3000)
+		for (let i = 0; i < 31; i++) {
+			this._gv.startGameEntranceFlicker = !this._gv.startGameEntranceFlicker;
+			await this.sleep(150);
+		}
+		this._gv.startGamePlayerShown = true;
+		this._gv.playerCanMove = true;
+
+		let ameba = this._gv.allAI.filter((el) => { return el.constructor.name == "Ameba" });
+		if (ameba.length > 0) {
+			ameba[0] instanceof Ameba ? ameba[0].expand() : null;
+		}
+
+		let firefliesNButterflies = this._gv.allAI.filter((el) => {
+			return el.constructor.name == "Firefly" ||
+				el.constructor.name == "Butterfly"
+		})
+		if (firefliesNButterflies.length > 0) {
+			for (let ai of firefliesNButterflies) {
+				if (ai instanceof Firefly || ai instanceof Butterfly)
+					ai.startMoving();
+			}
+		}
+
+		this.setLevelTimer()
+
+	}
+
+	setLevelTimer() {
+		this._gv.startTime = new Date().getTime();
+		this._gv.endTime = this._gv.startTime + (this._gv.timePerLevel * 1000);
+		this.timerUpdateInterval = setInterval(() => {
+			this._gv.timeLeft = Math.floor((this._gv.endTime - new Date().getTime()) / 1000);
+
+			this._gv.timeLeftDiv.innerText = `${this._gv.timeLeft}`;
+
+			if (this._gv.timeLeft <= 0) {
+				Player.die(this._gv, "timed out");
+				clearInterval(this.timerUpdateInterval);
+			}
+		}, 500)
+	}
+
+	sleep(ms: number): Promise<unknown> {
+		return new Promise(resolve => setTimeout(resolve, ms));
+	}
+
+	updateGameStats() {
+
 	}
 
 	/**
@@ -62,6 +152,7 @@ export default class Board {
 		this._gv.currLevel = levels[this._gv.currLevelNumber];
 		this._gv.levelHeight = this._gv.currLevel.length;
 		this._gv.levelWidth = this._gv.currLevel[0].length;
+		this._gv.levelNumberDiv.innerText = `${this._gv.currLevelNumber + 1}`;
 	}
 
 	/**
@@ -241,8 +332,13 @@ export default class Board {
 
 					case 9: // Player
 						// console.log(`Creating player: x:${x}, y:${y}`);
+						this._gv.entrance = new Entrance(this._gv, this, x, y, "start");
 						this._gv.playerX = x;
 						this._gv.playerY = y;
+						break;
+
+					case 10:
+						this._gv.exit = new Entrance(this._gv, this, x, y, "exit");
 						break;
 
 					default:
@@ -276,9 +372,9 @@ export default class Board {
 						new Butterfly(this._gv, x, y)
 					)
 				} else if (this._gv.currLevel[y][x] == 8) {
-					// this._gv.allAI.push(
-					new Ameba(this._gv, x, y)
-					// )
+					this._gv.allAI.push(
+						new Ameba(this._gv, x, y)
+					)
 				}
 			}
 		}
@@ -288,17 +384,17 @@ export default class Board {
 	/**
 	 * Switches gravity on for each boulder and diamond
 	 */
-	enableGravity() {
-		let boulders: Boulder[] = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
-		for (let boulder of boulders) {
-			boulder.fall();
-		}
+	// enableGravity() {
+	// 	let boulders: Boulder[] = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
+	// 	for (let boulder of boulders) {
+	// 		boulder.fall();
+	// 	}
 
-		let diamonds: Diamond[] = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Diamond" })
-		for (let diamond of diamonds) {
-			diamond.fall();
-		}
-	}
+	// 	let diamonds: Diamond[] = this._gv.allDynamic.filter((el) => { return el.constructor.name == "Diamond" })
+	// 	for (let diamond of diamonds) {
+	// 		diamond.fall();
+	// 	}
+	// }
 
 	/**
 	 * Removes a static element from the game 
@@ -315,6 +411,11 @@ export default class Board {
 	}
 
 	update() {
+		if (this._gv.startGameEntranceFlicker) {
+			this._gv.entrance.update();
+		}
+		this._gv.exit.update();
+
 		// update all static elements on the board
 		if (Board.playerMoved) {
 			this.getPartOfScene();

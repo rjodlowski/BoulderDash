@@ -8,9 +8,24 @@ body, html {
 	display: flex;
 	justify-content: center;
 	align-items: center;
+	flex-direction: column;
 }
 
 canvas {
 	/* background-color: red; */
 	border: 2px solid black;
+}
+
+#statsDiv {
+	border: 1px solid black;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+	flex-direction: row;
+	height: 80px;
+}
+
+#statsDiv > * {
+	font-size: 50px;
+	color: red;
 }

@@ -19,7 +19,16 @@ export default class Diamond extends Boulder {
 		this._gv.allDynamic.splice(index, 1);
 
 		if (index != -1) {
-			this._gv.currentScore += this._gv.pointsPerDiamondCollected;
+			this._gv.score += this._gv.pointsPerDiamondCollected;
+			this._gv.scoreDiv.innerText = `${this._gv.score}`;
+		}
+
+		this.checkForOpenEntrance();
+
+	}
+	checkForOpenEntrance() {
+		if (this._gv.diamondsCollected >= this._gv.diamondsToCollectNumber) {
+			this._gv.exitOpen = true;
 		}
 	}
 }

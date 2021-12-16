@@ -42,6 +42,7 @@ export default class Player {
 		this.relY = this.absY * this._gv.fieldSize;
 
 		this.draw(this.relX, this.relY);
+
 	}
 
 	/**
@@ -50,14 +51,27 @@ export default class Player {
 	 * @param relY
 	 */
 	draw(relX: number, relY: number) {
-		if (this._gv.playerAlive) {
-			this._gv.ctx.fillStyle = this.color;
-			this._gv.ctx.fillRect(
-				relX,
-				relY,
-				this._gv.fieldSize,
-				this._gv.fieldSize,
-			)
+		if (this._gv.newLevel) {
+			console.log("haha zmieniam se");
+
+			this.absX = this._gv.playerX;
+			this.absY = this._gv.playerY;
+			this.relX = this.absX * this._gv.fieldSize;
+			this.relY = this.absY * this._gv.fieldSize;
+
+			this._gv.newLevel = false;
+		} else {
+			if (this._gv.startGamePlayerShown) {
+				if (this._gv.playerAlive) {
+					this._gv.ctx.fillStyle = this.color;
+					this._gv.ctx.fillRect(
+						relX,
+						relY,
+						this._gv.fieldSize,
+						this._gv.fieldSize,
+					)
+				}
+			}
 		}
 	}
 
@@ -294,6 +308,10 @@ export default class Player {
 					if (foundAI[0].constructor.name == "Firefly") {
 						Player.die(this._gv, "fireflied")
 					}
+				} else {
+					if (this.absX == this._gv.exit.absX && this.absY == this._gv.exit.absY) {
+						this._gv.exit.exit();
+					}
 				}
 			}
 		}
@@ -319,8 +337,10 @@ export default class Player {
 				if (entityLeft.length > 0) {
 					let name = entityLeft[0].constructor.name
 					if (name == "Boulder") {
-						// console.log("Boulder / diamond moved:", side);
-						entityLeft[0].moveByPlayer(side)
+						if (!entityLeft[0].falling) {
+							// console.log("Boulder / diamond moved:", side);
+							entityLeft[0].moveByPlayer(side)
+						}
 					} else if (name == "Diamond") {
 						// console.log("Walked on a diamond");
 					} else {
@@ -362,8 +382,8 @@ export default class Player {
 	public static collectDiamond(gv: GlobalVars, diamond: Boulder | Diamond) {
 		// console.log("Player collected a diamond!");
 		diamond.collect();
-
-		//TODO Update point display
+		gv.diamondsCollected += 1;
+		gv.diamondsCollectedDiv.innerText = `${gv.diamondsCollected}`;
 	}
 
 	/**

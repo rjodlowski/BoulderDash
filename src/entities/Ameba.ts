@@ -34,7 +34,7 @@ export default class Ameba {
 			new SmolAmeba(this._gv, this.absX, this.absY)
 		)
 		this._gv.smolAmebaCount++;
-		this.expand();
+		// this.expand();
 
 		// Player interaction with small ameba (blocks the wae) -> done
 		// Boulder interaction with small ameba (crushing) - done
@@ -49,14 +49,16 @@ export default class Ameba {
 	expand() {
 		this.expandInterval = setInterval(() => {
 			if (this.expandedDuringIteration != 0) {
+
 				console.log("expansion iteration");
 				this.contaminate()
+				console.log(this.expandedDuringIteration);
 			} else {
 				clearInterval(this.expandInterval);
-				console.log("Stopped growing");
+				console.log("Stopped growing", this._gv.smolAmebaCount);
 				this.finishExisting();
 			}
-		}, this._gv.gravityIntervalTime * 5)
+		}, this._gv.gravityIntervalTime * 30)
 	}
 
 	/**
@@ -82,6 +84,8 @@ export default class Ameba {
 							}
 							break;
 						case "bottom":
+							console.log();
+
 							if (this._gv.currLevel[ameba.absY + 1][ameba.absX] != 9) {
 								if (this._gv.allAI.filter((el) => {
 									return el.absX == ameba.absX && el.absY == ameba.absY + 1

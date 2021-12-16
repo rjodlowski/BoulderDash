@@ -31,7 +31,9 @@ export default class Boulder {
 		this.relX = (this.absX - this._gv.displayX) * this._gv.fieldSize;
 		this.relY = (this.absY - this._gv.displayY) * this._gv.fieldSize;
 
+		// setTimeout(() => {
 		this.fall();
+		// }, 100);
 	}
 
 	draw(relX: number, relY: number) {
@@ -65,6 +67,29 @@ export default class Boulder {
 				this.relX -= this._gv.fieldSize;
 				break;
 		}
+	}
+
+	/**
+	  * Movement affected by gravity
+	  */
+	fall() {
+		this.gravityInterval = setInterval(() => {
+			if (this.canFall()) {
+				// Fall relatively
+				this.relY += this._gv.fieldSize;
+				// Fall absolutely
+				this._gv.currLevel[this.absY][this.absX] = 0
+				this._gv.currLevel[this.absY + 1][this.absX] = 4;
+				this.absY++;
+				this.falling = true;
+			} else {
+				// console.log(this, "rolling down");
+				this.rollDown();
+
+			}
+		}, this._gv.gravityIntervalTime + Math.random() * this._gv.gravityIntervalTime / 10)
+		// }, this._gv.gravityIntervalTime)
+		// this._gv.gravityIntervalTime -= 6; // Rocks lower fall faster
 	}
 
 	/**
@@ -124,6 +149,7 @@ export default class Boulder {
 
 			if (fieldBeneath != undefined) {
 				if (
+					this.falling &&
 					this instanceof Boulder && fieldBeneath instanceof Firefly ||
 					this instanceof Boulder && fieldBeneath instanceof Butterfly
 				) {
@@ -137,24 +163,6 @@ export default class Boulder {
 		return true;
 	}
 
-	/**
-	 * Movement affected by gravity
-	 */
-	fall() {
-		this.gravityInterval = setInterval(() => {
-			if (this.canFall()) {
-				// Fall relatively
-				this.relY += this._gv.fieldSize;
-				// Fall absolutely
-				this._gv.currLevel[this.absY][this.absX] = 0
-				this._gv.currLevel[this.absY + 1][this.absX] = 4;
-				this.absY++;
-				this.falling = true;
-			} else {
-				this.rollDown();
-			}
-		}, this._gv.gravityIntervalTime + Math.random() * this._gv.gravityIntervalTime / 5)
-	}
 
 	/**
 	 * Checks if empty space below or stacked on another boulder
@@ -199,7 +207,7 @@ export default class Boulder {
 	rollDown() {
 		let directions = this.canRollDown();
 
-		if (directions.length > 0 && this.falling) {
+		if (directions.length > 0) {
 			// console.log("Rolling down", directions[0]);
 			switch (directions[0]) {
 				case "left":

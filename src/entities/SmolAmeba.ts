@@ -15,6 +15,7 @@ export default class SmolAmeba {
 	color: string = "cyan";
 
 	canExpand: boolean = true;
+	show: boolean = false;
 
 	constructor(gv: GlobalVars, x: number, y: number) {
 		this._gv = gv;
@@ -23,6 +24,14 @@ export default class SmolAmeba {
 		this.absY = y;
 		this.relX = (this.absX - this._gv.displayX) * this._gv.fieldSize;
 		this.relY = (this.absY - this._gv.displayY) * this._gv.fieldSize;
+
+		this.showAfter(Math.random() * 2000);
+	}
+
+	showAfter(time: number) {
+		setTimeout(() => {
+			this.show = !this.show;
+		}, time);
 	}
 
 	/**
@@ -124,13 +133,15 @@ export default class SmolAmeba {
 	}
 
 	draw(relX: number, relY: number) {
-		this._gv.ctx.fillStyle = this.color;
-		this._gv.ctx.fillRect(
-			relX,
-			relY,
-			this._gv.fieldSize,
-			this._gv.fieldSize,
-		)
+		if (this.show) {
+			this._gv.ctx.fillStyle = this.color;
+			this._gv.ctx.fillRect(
+				relX,
+				relY,
+				this._gv.fieldSize,
+				this._gv.fieldSize,
+			)
+		}
 	}
 
 	update() {
