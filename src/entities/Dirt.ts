@@ -39,6 +39,7 @@ export default class Dirt {
 	delete() {
 		let index = this._gv.allElements.indexOf(this);
 		this._gv.allElements.splice(index, 1);
+
 	}
 
 	getImage() {

@@ -415,6 +415,7 @@ export default class Board {
 
 		// Remove from level
 		gv.currLevel[gv.displayY + y][gv.displayX + x] = 0
+		gv.currLevel[gv.displayY + y][gv.displayX + x] = 9
 	}
 
 	update() {

@@ -264,6 +264,7 @@ export default class Player {
 				console.log("Unknown direction");
 		}
 		this.checkIfWalkedOnSth();
+		// console.table(this._gv.currLevel)
 	}
 
 	/**
@@ -396,7 +397,9 @@ export default class Player {
 	 */
 	public static collectDiamond(gv: GlobalVars, diamond: Boulder | Diamond) {
 		// console.log("Player collected a diamond!");
-		diamond.collect();
+		if (diamond instanceof Diamond) {
+			diamond.collect();
+		}
 		// gv.diamondsCollected += 1;
 		gv.diamondsCollectedDiv.innerText = `${gv.diamondsCollected}`;
 	}

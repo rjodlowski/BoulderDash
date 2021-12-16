@@ -1,6 +1,7 @@
 import GlobalVars from "../GlobalVars";
 import Player from "../Player";
 import Butterfly from "./Butterfly";
+import Diamond from "./Diamond";
 import Firefly from "./Firefly";
 import Images from "./Images";
 import SmolAmeba from "./SmolAmeba";
@@ -206,15 +207,19 @@ export default class Boulder {
 		if (objectBeneath.length > 0) {
 			if (this.absY < this._gv.levelHeight - 1) {
 				// Try to fall left
-				if (this._gv.currLevel[this.absY][this.absX - 1] == 0) {
-					if (this._gv.currLevel[this.absY + 1][this.absX - 1] == 0) {
+				let fieldLeft = this._gv.currLevel[this.absY][this.absX - 1]
+				if (fieldLeft == 0 || fieldLeft == 9) {
+					let fieldDownLeft = this._gv.currLevel[this.absY + 1][this.absX - 1]
+					if (fieldDownLeft == 0 || fieldDownLeft == 9) {
 						directions.push("left");
 					}
 				}
 				// Can't fall left, check right
 				if (directions.length == 0) {
-					if (this._gv.currLevel[this.absY][this.absX + 1] === 0) {
-						if (this._gv.currLevel[this.absY + 1][this.absX + 1] === 0) {
+					let fieldRight = this._gv.currLevel[this.absY][this.absX + 1]
+					if (fieldRight == 0 || fieldRight == 9) {
+						let fieldRightDown = this._gv.currLevel[this.absY + 1][this.absX + 1]
+						if (fieldRightDown == 0 || fieldRightDown == 9) {
 							directions.push("right");
 						}
 					}
@@ -234,24 +239,37 @@ export default class Boulder {
 			// console.log("Rolling down", directions[0]);
 			switch (directions[0]) {
 				case "left":
+					if (this._gv.currLevel[this.absY][this.absX - 1] == 9) {
+						if (this instanceof Diamond && this.constructor.name == "Diamond") {
+							this.collect();
+						} else {
+							Player.die(this._gv, "crushed")
+						}
+					}
 					// Move relatively
 					this.relX -= this._gv.fieldSize;
 					// Move absolutely
 					this._gv.currLevel[this.absY][this.absX] = 0
 					this._gv.currLevel[this.absY][this.absX - 1] = 4;
 					this.absX--;
-
 					break;
 				case "right":
+					if (this._gv.currLevel[this.absY][this.absX + 1] == 9) {
+						if (this instanceof Diamond && this.constructor.name == "Diamond") {
+							this.collect();
+						} else {
+							Player.die(this._gv, "crushed")
+						}
+					}
 					// Move relatively
 					this.relX += this._gv.fieldSize;
 					// Move absolutely
 					this._gv.currLevel[this.absY][this.absX] = 0
 					this._gv.currLevel[this.absY][this.absX + 1] = 4;
 					this.absX++;
-
 					break;
 			}
+			this.falling = true;
 		} else {
 			this.falling = false;
 		}
@@ -290,9 +308,9 @@ export default class Boulder {
 	/**
 	 * Method for the sake of Typescript, shouldn't ever be called
 	 */
-	collect() {
-		alert("Boulder is not collectable lol");
-	}
+	// collect() {
+	// 	alert("Boulder is not collectable lol");
+	// }
 
 	/**
 	 * Destroys boulder (e.g. if exploded)

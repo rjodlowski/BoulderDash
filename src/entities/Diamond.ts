@@ -26,8 +26,6 @@ export default class Diamond extends Boulder {
 			this._gv.diamondsCollected++;
 			this.checkForOpenEntrance();
 		}
-
-
 	}
 
 	checkForOpenEntrance() {
