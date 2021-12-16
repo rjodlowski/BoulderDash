@@ -244,22 +244,23 @@ export default class Firefly {
 		switch (this.facing) {
 			case "top":
 				let fieldTop = this._gv.currLevel[this.absY - 1][this.absX - 1]
-				fieldTop == 0 || fieldTop == 9 ? goingToTurn = true : 0
+
+				this.canGoForwards() && fieldTop == 0 || fieldTop == 9 ? goingToTurn = true : 0
 				break;
 
 			case "bottom":
 				let fieldBot = this._gv.currLevel[this.absY + 1][this.absX + 1]
-				fieldBot == 0 || fieldBot == 9 ? goingToTurn = true : 0
+				this.canGoForwards() && fieldBot == 0 || fieldBot == 9 ? goingToTurn = true : 0
 				break;
 
 			case "left":
 				let fieldLeft = this._gv.currLevel[this.absY + 1][this.absX - 1]
-				fieldLeft == 0 || fieldLeft == 9 ? goingToTurn = true : 0
+				this.canGoForwards() && fieldLeft == 0 || fieldLeft == 9 ? goingToTurn = true : 0
 				break;
 
 			case "right":
 				let fieldRight = this._gv.currLevel[this.absY - 1][this.absX + 1]
-				fieldRight == 0 || fieldRight == 9 ? goingToTurn = true : 0
+				this.canGoForwards() && fieldRight == 0 || fieldRight == 9 ? goingToTurn = true : 0
 				break;
 		}
 		// console.log("is on corner: ", goingToTurn);
@@ -311,9 +312,6 @@ export default class Firefly {
 	crush() {
 		console.log("Firefly crushed");
 		clearInterval(this.movementInterval)
-
-		console.log(this.absY, this.absX);
-
 
 		for (let y = this.absY - 1; y <= this.absY + 1; y++) {
 			for (let x = this.absX - 1; x <= this.absX + 1; x++) {
@@ -376,8 +374,7 @@ export default class Firefly {
 		console.log("Creating diamonds");
 		for (let y = this.absY - 1; y <= this.absY + 1; y++) {
 			for (let x = this.absX - 1; x <= this.absX + 1; x++) {
-				console.log(y, x);
-
+				// console.log(y, x);
 				this._gv.currLevel[y][x] = 5
 				this._gv.allDynamic.push(
 					new Diamond(
@@ -388,8 +385,7 @@ export default class Firefly {
 				)
 			}
 		}
-
-		console.table(this._gv.currLevel)
+		// console.table(this._gv.currLevel)
 	}
 
 	getImage() {

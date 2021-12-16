@@ -108,7 +108,7 @@ export default class Entrance extends BorderWall {
 			this._board.checkWalls();
 			this._board.getPartOfScene();
 			this._board.displayScene();
-			// this._board.generateBoulders();
+			this._board.generateBoulders();
 			this._gv.newLevel = true;
 			this._board.startGame();
 		} else {

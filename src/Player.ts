@@ -376,7 +376,7 @@ export default class Player {
 				})
 				if (entityRight.length > 0) {
 					let name = entityRight[0].constructor.name
-					console.log(name);
+					// console.log(name);
 
 					if (name == "Boulder") {
 						// console.log("Boulder / diamond moved:", side);
