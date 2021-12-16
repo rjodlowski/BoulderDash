@@ -57,7 +57,7 @@ export default class GlobalVars {
 	timePerLevel: number = 150;
 	timeLeft: number = this.timePerLevel;
 	diamondsCollected: number[] = [0, 0, 0];
-	diamondsToCollectNumber: number[] = [5, 10, 2];
+	diamondsToCollectNumber: number[] = [12, 36, 25];
 	pointsPerDiamondCollected: number = 10;
 	pointsPerSecondSaved: number = 5;
 	score: number = 0;

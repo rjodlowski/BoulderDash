@@ -21,8 +21,6 @@ export default class Entrance extends BorderWall {
 		this.mode = mode;
 
 		console.log("Entrance created, mode: ", this.mode);
-
-		// TODO Mandatory move entrance
 	}
 
 	exit() {
