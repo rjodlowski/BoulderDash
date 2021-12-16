@@ -3,6 +3,7 @@ import Dirt from "./Dirt";
 import Diamond from "./Diamond";
 import Player from "../Player";
 import Butterfly from "./Butterfly";
+import Images from "./Images";
 
 export default class Firefly {
 	_gv: GlobalVars;
@@ -22,8 +23,13 @@ export default class Firefly {
 	isTurning: boolean = false;
 
 	movementInterval: NodeJS.Timer;
-
 	facing: string;
+
+	imageFirefly: HTMLImageElement;
+	imageButterfly: HTMLImageElement;
+
+	fireflyPhase1sx: number[] = [0, 24, 48, 72, 96, 120, 144, 168];
+	butterflyPhase1sx: number[] = [0, 24, 48, 72, 96, 120, 144, 168];
 
 	constructor(gv: GlobalVars, x: number, y: number) {
 		console.log("Firefly created!");
@@ -34,6 +40,7 @@ export default class Firefly {
 		this.relX = this.absX * this._gv.fieldSize;
 		this.relY = this.absY * this._gv.fieldSize;
 
+		this.getImage();
 		// TODOEXTRA Fireflies overlap each other
 	}
 
@@ -385,14 +392,29 @@ export default class Firefly {
 		console.table(this._gv.currLevel)
 	}
 
+	getImage() {
+		this.imageFirefly = Images.filter((el) => { return el.name == "firefly" })[0].image
+		this.imageButterfly = Images.filter((el) => { return el.name == "butterfly" })[0].image
+	}
+
 	draw(relX: number, relY: number) {
-		this._gv.ctx.fillStyle = this.color;
-		this._gv.ctx.fillRect(
-			relX,
-			relY,
-			this._gv.fieldSize,
-			this._gv.fieldSize,
-		)
+		if (this.constructor.name == "Firefly") {
+			this._gv.ctx.drawImage(
+				this.imageFirefly,
+				this.fireflyPhase1sx[this._gv.fireflyPhase], 0,
+				16, 16,
+				relX, relY,
+				this._gv.fieldSize, this._gv.fieldSize,
+			);
+		} else {
+			this._gv.ctx.drawImage(
+				this.imageButterfly,
+				this.butterflyPhase1sx[this._gv.butterflyPhase], 0,
+				16, 16,
+				relX, relY,
+				this._gv.fieldSize, this._gv.fieldSize,
+			);
+		}
 	}
 
 	update() {

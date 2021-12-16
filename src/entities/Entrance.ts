@@ -28,15 +28,14 @@ export default class Entrance extends BorderWall {
 	exit() {
 		if (this.mode == "exit") {
 			if (this._gv.exitOpen) {
-				this.endGame();
+				this.endLevel();
 			} else {
 				console.log("Not yet open!");
-				// TODO check open every diamond collect
 			}
 		}
 	}
 
-	async endGame() {
+	async endLevel() {
 		console.log("Ending level");
 
 		// Disable player movement
@@ -127,6 +126,7 @@ export default class Entrance extends BorderWall {
 		this._gv.entrance = undefined;
 		this._gv.exit = undefined;
 		this._gv.newLevel = true;
+		this._gv.exitOpen = false;
 
 		this._gv.timeLeft = this._gv.timePerLevel;
 		this._gv.timeLeftDiv.innerText = `${this._gv.timeLeft}`;
@@ -141,19 +141,20 @@ export default class Entrance extends BorderWall {
 		return new Promise(resolve => setTimeout(resolve, ms));
 	}
 
-	draw(relX: number, relY: number) {
-		// if (this._gv.startGameEntranceFlicker) {
-		this._gv.ctx.fillStyle = this.color;
-		this._gv.ctx.fillRect(
-			relX,
-			relY,
-			this._gv.fieldSize,
-			this._gv.fieldSize,
-		)
-		// }
-	}
-
-	update() {
-		this.draw(this.relX, this.relY);
+	mandatoryMove(direction: string) {
+		switch (direction) {
+			case "top":
+				this.relY += this._gv.fieldSize;
+				break;
+			case "bottom":
+				this.relY -= this._gv.fieldSize;
+				break;
+			case "left":
+				this.relX += this._gv.fieldSize;
+				break;
+			case "right":
+				this.relX -= this._gv.fieldSize;
+				break;
+		}
 	}
 }

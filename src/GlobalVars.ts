@@ -29,6 +29,19 @@ export default class GlobalVars {
 	canvasHeight: number = this.fieldsPerHeight * this.fieldSize; // Canvas width in pixels	
 	currentScore: number = 0;
 
+	// image animation vairables
+	diamondPhase: number = 0;
+	diamondPhaseInterval: NodeJS.Timer;
+	fireflyPhase: number = 0;
+	fireflyPhaseInterval: NodeJS.Timer;
+	butterflyPhase: number = 0;
+	butterflyPhaseInterval: NodeJS.Timer;
+	amebaPhase: number = 0;
+	amebaPhaseInterval: NodeJS.Timer;
+	playerPhase: number = 0;
+	playerPhaseInterval: NodeJS.Timer;
+	playerDirection: number = 0;
+
 	// Game variables
 	currLevelNumber: number = 0; // Mumber of the current level
 	levelWidth: number; // Width of a level in fields
@@ -44,10 +57,10 @@ export default class GlobalVars {
 	timePerLevel: number = 150;
 	timeLeft: number = this.timePerLevel;
 	diamondsCollected: number = 0;
-	diamondsToCollectNumber: number = 69;
+	diamondsToCollectNumber: number = 1;
 	pointsPerDiamondCollected: number = 10;
-	pointsPerSecondSaved: number = 10;
-	score: number = 1000;
+	pointsPerSecondSaved: number = 5;
+	score: number = 0;
 	newLevel: boolean = false;
 	exitOpen: boolean = false;
 

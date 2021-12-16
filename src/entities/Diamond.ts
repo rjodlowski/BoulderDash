@@ -6,6 +6,8 @@ export default class Diamond extends Boulder {
 
 	color: string = "green";
 
+	imageToDraw: HTMLImageElement;
+
 	constructor(gv: GlobalVars, x: number, y: number) {
 		super(gv, x, y);
 	}
@@ -21,11 +23,13 @@ export default class Diamond extends Boulder {
 		if (index != -1) {
 			this._gv.score += this._gv.pointsPerDiamondCollected;
 			this._gv.scoreDiv.innerText = `${this._gv.score}`;
+			this._gv.diamondsCollected++;
+			this.checkForOpenEntrance();
 		}
 
-		this.checkForOpenEntrance();
 
 	}
+
 	checkForOpenEntrance() {
 		if (this._gv.diamondsCollected >= this._gv.diamondsToCollectNumber) {
 			this._gv.exitOpen = true;

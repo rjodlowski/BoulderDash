@@ -1,4 +1,6 @@
 import GlobalVars from "../GlobalVars";
+import IImage from "./IImage";
+import Images from "./Images";
 
 // Example object on the canvas, not the part of final project
 export default class BorderWall {
@@ -16,6 +18,9 @@ export default class BorderWall {
 	playerPassable: boolean = false;
 	entityPassable: boolean = false;
 
+	imageBorderWall: HTMLImageElement;
+	imageExit: HTMLImageElement;
+
 	constructor(gv: GlobalVars, x: number, y: number,) {
 		this._gv = gv;
 
@@ -24,17 +29,43 @@ export default class BorderWall {
 		this.relX = this.absX * this._gv.fieldSize;
 		this.relY = this.absY * this._gv.fieldSize;
 
+		this.getImage()
 		this.draw(this.relX, this.relY);
 	}
 
+	getImage() {
+		this.imageBorderWall = Images.filter((el) => { return el.name == "borderWall" })[0].image
+		this.imageExit = Images.filter((el) => { return el.name == "door" })[0].image
+	}
+
 	draw(relX: number, relY: number) {
-		this._gv.ctx.fillStyle = this.color;
-		this._gv.ctx.fillRect(
-			relX,
-			relY,
-			this._gv.fieldSize,
-			this._gv.fieldSize,
-		)
+		if (this.constructor.name == "BorderWall") {
+			this._gv.ctx.drawImage(
+				this.imageBorderWall,
+				relX,
+				relY,
+				this._gv.fieldSize,
+				this._gv.fieldSize,
+			);
+		} else {
+			if (this._gv.exitOpen) {
+				this._gv.ctx.drawImage(
+					this.imageExit,
+					relX,
+					relY,
+					this._gv.fieldSize,
+					this._gv.fieldSize,
+				);
+			} else {
+				this._gv.ctx.drawImage(
+					this.imageBorderWall,
+					relX,
+					relY,
+					this._gv.fieldSize,
+					this._gv.fieldSize,
+				);
+			}
+		}
 	}
 
 	update() {

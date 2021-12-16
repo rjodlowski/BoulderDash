@@ -2,6 +2,7 @@ import GlobalVars from "../GlobalVars";
 import Player from "../Player";
 import Butterfly from "./Butterfly";
 import Firefly from "./Firefly";
+import Images from "./Images";
 import SmolAmeba from "./SmolAmeba";
 
 export default class Boulder {
@@ -22,6 +23,11 @@ export default class Boulder {
 	entityPassable: boolean = false;
 	falling: boolean = false;
 
+	imageBoulder: HTMLImageElement
+
+	imageDiamond: HTMLImageElement
+	diamondPhase1sx: number[] = [0, 24, 48, 72, 96, 120, 144, 168];
+
 	constructor(gv: GlobalVars, x: number, y: number) {
 		// console.log("Boulder created");
 		this._gv = gv;
@@ -32,18 +38,35 @@ export default class Boulder {
 		this.relY = (this.absY - this._gv.displayY) * this._gv.fieldSize;
 
 		// setTimeout(() => {
+
+		this.getImage();
 		this.fall();
 		// }, 100);
 	}
 
+	getImage() {
+		this.imageBoulder = Images.filter((el) => { return el.name == "boulder" })[0].image
+		this.imageDiamond = Images.filter((el) => { return el.name == "diamond" })[0].image
+	}
+
 	draw(relX: number, relY: number) {
-		this._gv.ctx.fillStyle = this.color;
-		this._gv.ctx.fillRect(
-			relX,
-			relY,
-			this._gv.fieldSize,
-			this._gv.fieldSize,
-		)
+		if (this.constructor.name == "Boulder") {
+			this._gv.ctx.drawImage(
+				this.imageBoulder,
+				relX,
+				relY,
+				this._gv.fieldSize,
+				this._gv.fieldSize,
+			);
+		} else {
+			this._gv.ctx.drawImage(
+				this.imageDiamond,
+				this.diamondPhase1sx[this._gv.diamondPhase], 0,
+				16, 16,
+				relX, relY,
+				this._gv.fieldSize, this._gv.fieldSize,
+			);
+		}
 	}
 
 	/**

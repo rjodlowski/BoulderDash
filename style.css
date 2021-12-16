@@ -1,5 +1,6 @@
 body, html {
 	margin: 0 auto;
+	background-color: slategray;
 }
 
 #app {
@@ -18,6 +19,7 @@ canvas {
 
 #statsDiv {
 	border: 1px solid black;
+	background-color: rgb(60, 60, 60);
 	display: flex;
 	justify-content: space-around;
 	align-items: center;

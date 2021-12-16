@@ -36,6 +36,10 @@ export default class Board {
 			right: false,
 		}
 
+		// image loading
+
+
+		// Game stuff
 		this.createStats();
 		this.setLevel(this._gv.currLevelNumber);
 		this.createCanvas();
@@ -141,6 +145,8 @@ export default class Board {
 		this._gv.app.append(canvas);
 		this._gv.canvas = canvas;
 		this._gv.ctx = this._gv.canvas.getContext("2d");
+		this._gv.ctx.fillStyle = "black";
+		this._gv.ctx.fillRect(0, 0, canvas.width, canvas.height);
 	}
 
 	/**
@@ -263,6 +269,7 @@ export default class Board {
 				ai.mandatoryMove(direction)
 			}
 		}
+		gv.exit.mandatoryMove(direction);
 	}
 
 	/**

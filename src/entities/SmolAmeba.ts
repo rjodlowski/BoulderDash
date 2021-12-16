@@ -1,5 +1,6 @@
 import GlobalVars from "../GlobalVars";
 import Dirt from "./Dirt";
+import Images from "./Images";
 
 export default class SmolAmeba {
 	_gv: GlobalVars;
@@ -17,6 +18,9 @@ export default class SmolAmeba {
 	canExpand: boolean = true;
 	show: boolean = false;
 
+	imageAmeba: HTMLImageElement
+	amebaPhase1sx: number[] = [0, 24, 48, 72, 96, 120, 144, 168];
+
 	constructor(gv: GlobalVars, x: number, y: number) {
 		this._gv = gv;
 
@@ -24,6 +28,8 @@ export default class SmolAmeba {
 		this.absY = y;
 		this.relX = (this.absX - this._gv.displayX) * this._gv.fieldSize;
 		this.relY = (this.absY - this._gv.displayY) * this._gv.fieldSize;
+
+		this.getImage();
 
 		this.showAfter(Math.random() * 2000);
 	}
@@ -132,15 +138,19 @@ export default class SmolAmeba {
 		this._gv.allAI.splice(index, 1);
 	}
 
+	getImage() {
+		this.imageAmeba = Images.filter((el) => { return el.name == "ameba" })[0].image
+	}
+
 	draw(relX: number, relY: number) {
 		if (this.show) {
-			this._gv.ctx.fillStyle = this.color;
-			this._gv.ctx.fillRect(
-				relX,
-				relY,
-				this._gv.fieldSize,
-				this._gv.fieldSize,
-			)
+			this._gv.ctx.drawImage(
+				this.imageAmeba,
+				this.amebaPhase1sx[this._gv.amebaPhase], 0,
+				16, 16,
+				relX, relY,
+				this._gv.fieldSize, this._gv.fieldSize,
+			);
 		}
 	}
 

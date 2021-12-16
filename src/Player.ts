@@ -3,6 +3,7 @@ import Boulder from "./entities/Boulder";
 import Butterfly from "./entities/Butterfly";
 import Diamond from "./entities/Diamond";
 import Firefly from "./entities/Firefly";
+import Images from "./entities/Images";
 import GlobalVars from "./GlobalVars";
 
 export default class Player {
@@ -28,6 +29,10 @@ export default class Player {
 
 	public static alive: boolean = false;
 
+	imagePlayer: HTMLImageElement;
+	playerPhaseSX: number[] = [0, 24, 48, 72, 96, 120, 144, 168];
+	playerPhaseSY: number[] = [24, 96, 120];
+
 	constructor(gv: GlobalVars, startX: number, startY: number) {
 		this._gv = gv;
 
@@ -41,8 +46,13 @@ export default class Player {
 		this.relX = this.absX * this._gv.fieldSize;
 		this.relY = this.absY * this._gv.fieldSize;
 
+		this.getImage();
 		this.draw(this.relX, this.relY);
 
+	}
+
+	getImage() {
+		this.imagePlayer = Images.filter((el) => { return el.name == "rockford" })[0].image
 	}
 
 	/**
@@ -63,13 +73,13 @@ export default class Player {
 		} else {
 			if (this._gv.startGamePlayerShown) {
 				if (this._gv.playerAlive) {
-					this._gv.ctx.fillStyle = this.color;
-					this._gv.ctx.fillRect(
-						relX,
-						relY,
-						this._gv.fieldSize,
-						this._gv.fieldSize,
-					)
+					this._gv.ctx.drawImage(
+						this.imagePlayer,
+						this.playerPhaseSX[this._gv.playerPhase], this.playerPhaseSY[this._gv.playerDirection],
+						16, 16,
+						relX, relY,
+						this._gv.fieldSize, this._gv.fieldSize,
+					);
 				}
 			}
 		}
@@ -197,6 +207,8 @@ export default class Player {
 						this.groundShifted = true;
 					}
 				}
+
+				// this._gv.playerDirection = 0;
 				break;
 			case 'left':
 				let leftBorderPx = this._gv.fieldSize * this._gv.innerBorder
@@ -221,6 +233,7 @@ export default class Player {
 					}
 				}
 
+				this._gv.playerDirection = 1;
 				break;
 			case 'right':
 				let rightBorderPx = this._gv.canvasWidth - ((this._gv.innerBorder + 1) * this._gv.fieldSize)
@@ -244,6 +257,8 @@ export default class Player {
 						this.groundShifted = true;
 					}
 				}
+
+				this._gv.playerDirection = 2;
 				break;
 			default:
 				console.log("Unknown direction");
@@ -382,7 +397,7 @@ export default class Player {
 	public static collectDiamond(gv: GlobalVars, diamond: Boulder | Diamond) {
 		// console.log("Player collected a diamond!");
 		diamond.collect();
-		gv.diamondsCollected += 1;
+		// gv.diamondsCollected += 1;
 		gv.diamondsCollectedDiv.innerText = `${gv.diamondsCollected}`;
 	}
 
@@ -409,11 +424,16 @@ export default class Player {
 		}
 		// Show end game picture
 		setTimeout(() => {
+			// Background
+			gv.ctx.fillStyle = "black";
+			gv.ctx.fillRect(0, 0, gv.canvas.width, gv.canvas.height);
 
+			// Text
 			gv.ctx.font = "48px serif";
 			gv.ctx.fillStyle = "red";
 			gv.ctx.fillText(`Ded becose: ${reason}`, 100, 100);
 
+			// Image
 			let img = new Image()
 			img.src = "../assets/graphics/death_screen_2.jpg";
 			img.onload = function () {
