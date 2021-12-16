@@ -5,6 +5,7 @@ import BorderWall from "./BorderWall";
 import Butterfly from "./Butterfly";
 import Firefly from "./Firefly";
 import levels from "../levels/Levels";
+import Player from "../Player";
 
 // Example object on the canvas, not the part of final project
 export default class Entrance extends BorderWall {
@@ -110,8 +111,8 @@ export default class Entrance extends BorderWall {
 			this._gv.newLevel = true;
 			this._board.startGame();
 		} else {
-			alert("No more levels");
-			// TODO Game win screen
+			// alert("No more levels");
+			Player.win(this._gv);
 		}
 	}
 

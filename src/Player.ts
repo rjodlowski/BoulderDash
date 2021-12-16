@@ -449,6 +449,46 @@ export default class Player {
 
 	}
 
+	public static win(gv: GlobalVars) {
+		gv.playerAlive = false;
+		// change Player type value
+		Player.alive = false;
+
+		// Stop movement on the board
+		let boulders: Boulder[] = gv.allDynamic.filter((el) => { return el.constructor.name == "Boulder" })
+		for (let boulder of boulders) {
+			clearInterval(boulder.gravityInterval)
+		}
+		for (let ai of gv.allAI) {
+			if (ai instanceof Firefly || ai instanceof Butterfly) {
+				clearInterval(ai.movementInterval);
+			}
+		}
+
+		setTimeout(() => {
+			// Background
+			gv.ctx.fillStyle = "black";
+			gv.ctx.fillRect(0, 0, gv.canvas.width, gv.canvas.height);
+
+			// Text
+			gv.ctx.font = "48px serif";
+			gv.ctx.fillStyle = "red";
+			gv.ctx.fillText(`You win! Your score: ${gv.score}`, 100, 100);
+
+			// Image
+			let img = new Image()
+			img.src = "../assets/graphics/win_screen.jpg";
+			img.onload = function () {
+				gv.ctx.drawImage(img,
+					(gv.canvasWidth - 265) / 2,
+					(gv.canvas.height - 257) / 2,
+				)
+			}
+		}, 100);
+
+
+	}
+
 	update() {
 		this.draw(this.relX, this.relY);
 
