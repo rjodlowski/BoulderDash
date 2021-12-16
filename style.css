@@ -13,13 +13,13 @@ body, html {
 }
 
 canvas {
-	/* background-color: red; */
 	border: 2px solid black;
+	font-family: 'Press Start 2P', cursive;
 }
 
 #statsDiv {
 	border: 1px solid black;
-	background-color: rgb(60, 60, 60);
+	background-color: black;
 	display: flex;
 	justify-content: space-around;
 	align-items: center;
@@ -29,5 +29,6 @@ canvas {
 
 #statsDiv > * {
 	font-size: 50px;
-	color: red;
+	color: white;
+	font-family: 'Press Start 2P', cursive;
 }

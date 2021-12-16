@@ -43,7 +43,7 @@ export default class GlobalVars {
 	playerDirection: number = 0;
 
 	// Game variables
-	currLevelNumber: number = 2; // Mumber of the current level
+	currLevelNumber: number = 0; // Mumber of the current level
 	levelWidth: number; // Width of a level in fields
 	levelHeight: number;
 	currLevel: number[][] = [[]]; // Current level
@@ -57,7 +57,7 @@ export default class GlobalVars {
 	timePerLevel: number = 150;
 	timeLeft: number = this.timePerLevel;
 	diamondsCollected: number[] = [0, 0, 0];
-	diamondsToCollectNumber: number[] = [12, 36, 1];
+	diamondsToCollectNumber: number[] = [12, 36, 25];
 	pointsPerDiamondCollected: number = 10;
 	pointsPerSecondSaved: number = 5;
 	score: number = 0;

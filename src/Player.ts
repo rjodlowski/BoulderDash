@@ -471,7 +471,7 @@ export default class Player {
 			gv.ctx.fillRect(0, 0, gv.canvas.width, gv.canvas.height);
 
 			// Text
-			gv.ctx.font = "48px serif";
+			gv.ctx.font = "48px font123";
 			gv.ctx.fillStyle = "red";
 			gv.ctx.fillText(`You win! Your score: ${gv.score}`, 100, 100);
 
@@ -485,7 +485,6 @@ export default class Player {
 				)
 			}
 		}, 100);
-
 
 	}
 

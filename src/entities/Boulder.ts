@@ -306,13 +306,6 @@ export default class Boulder {
 	}
 
 	/**
-	 * Method for the sake of Typescript, shouldn't ever be called
-	 */
-	// collect() {
-	// 	alert("Boulder is not collectable lol");
-	// }
-
-	/**
 	 * Destroys boulder (e.g. if exploded)
 	 */
 	destroy() {
