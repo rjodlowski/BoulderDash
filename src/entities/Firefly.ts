@@ -245,22 +245,22 @@ export default class Firefly {
 			case "top":
 				let fieldTop = this._gv.currLevel[this.absY - 1][this.absX - 1]
 
-				this.canGoForwards() && fieldTop == 0 || fieldTop == 9 ? goingToTurn = true : 0
+				this.canGoForwards() && fieldTop == 0 ? goingToTurn = true : 0
 				break;
 
 			case "bottom":
 				let fieldBot = this._gv.currLevel[this.absY + 1][this.absX + 1]
-				this.canGoForwards() && fieldBot == 0 || fieldBot == 9 ? goingToTurn = true : 0
+				this.canGoForwards() && fieldBot == 0 ? goingToTurn = true : 0
 				break;
 
 			case "left":
 				let fieldLeft = this._gv.currLevel[this.absY + 1][this.absX - 1]
-				this.canGoForwards() && fieldLeft == 0 || fieldLeft == 9 ? goingToTurn = true : 0
+				this.canGoForwards() && fieldLeft == 0 ? goingToTurn = true : 0
 				break;
 
 			case "right":
 				let fieldRight = this._gv.currLevel[this.absY - 1][this.absX + 1]
-				this.canGoForwards() && fieldRight == 0 || fieldRight == 9 ? goingToTurn = true : 0
+				this.canGoForwards() && fieldRight == 0 ? goingToTurn = true : 0
 				break;
 		}
 		// console.log("is on corner: ", goingToTurn);

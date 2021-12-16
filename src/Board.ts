@@ -69,8 +69,8 @@ export default class Board {
 		this._gv.statsDiv.style.width = `${this._gv.canvasWidth}px`;
 
 		this._gv.levelNumberDiv.innerText = `${this._gv.currLevelNumber + 1}`;
-		this._gv.diamondsCollectedDiv.innerText = `${this._gv.diamondsCollected}`;
-		this._gv.diamondsToCollectDiv.innerText = `${this._gv.diamondsToCollectNumber}`;
+		this._gv.diamondsCollectedDiv.innerText = `${this._gv.diamondsCollected[this._gv.currLevelNumber]}`;
+		this._gv.diamondsToCollectDiv.innerText = `${this._gv.diamondsToCollectNumber[this._gv.currLevelNumber]}`;
 		this._gv.timeLeftDiv.innerText = `${this._gv.timeLeft}`;
 		this._gv.scoreDiv.innerText = `${this._gv.score}`;
 

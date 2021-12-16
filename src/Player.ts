@@ -401,7 +401,7 @@ export default class Player {
 			diamond.collect();
 		}
 		// gv.diamondsCollected += 1;
-		gv.diamondsCollectedDiv.innerText = `${gv.diamondsCollected}`;
+		gv.diamondsCollectedDiv.innerText = `${gv.diamondsCollected[gv.currLevelNumber]}`;
 	}
 
 	/**

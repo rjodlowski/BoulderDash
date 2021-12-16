@@ -23,13 +23,13 @@ export default class Diamond extends Boulder {
 		if (index != -1) {
 			this._gv.score += this._gv.pointsPerDiamondCollected;
 			this._gv.scoreDiv.innerText = `${this._gv.score}`;
-			this._gv.diamondsCollected++;
+			this._gv.diamondsCollected[this._gv.currLevelNumber]++;
 			this.checkForOpenEntrance();
 		}
 	}
 
 	checkForOpenEntrance() {
-		if (this._gv.diamondsCollected >= this._gv.diamondsToCollectNumber) {
+		if (this._gv.diamondsCollected[this._gv.currLevelNumber] >= this._gv.diamondsToCollectNumber[this._gv.currLevelNumber]) {
 			this._gv.exitOpen = true;
 		}
 	}

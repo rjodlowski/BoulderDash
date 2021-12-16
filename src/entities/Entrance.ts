@@ -131,8 +131,8 @@ export default class Entrance extends BorderWall {
 		this._gv.timeLeft = this._gv.timePerLevel;
 		this._gv.timeLeftDiv.innerText = `${this._gv.timeLeft}`;
 
-		this._gv.diamondsCollected = 0;
-		this._gv.diamondsCollectedDiv.innerText = `${this._gv.diamondsCollected}`
+		// this._gv.diamondsCollected = 0;
+		this._gv.diamondsCollectedDiv.innerText = `${this._gv.diamondsCollected[this._gv.currLevelNumber]}`
 		this._gv.startGameEntranceFlicker = true;
 		this._gv.startGamePlayerShown = false;
 	}
